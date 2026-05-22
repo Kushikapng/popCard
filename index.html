@@ -1,0 +1,2464 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PopCard!</title>
+  <link rel="icon" type="image/png" sizes="64x64" href="logo4.png" />
+  <link rel="stylesheet" href="landing.css" />
+</head>
+
+<body>
+  <nav class="navbar">
+    <div class="logo-container" onclick="showView('home')">
+      <img src="ChatGPT Image Sep 6, 2025, 10_44_31 PM.png" alt="PopCard Logo" />
+      <h1>PopCard</h1>
+    </div>
+    <input type="text" placeholder="Search stack..." class="search-bar" />
+
+    <div class="navbar-actions-group">
+      <button id="navbar-create-btn" onclick="showView('create')">+ Create now!</button>
+      <button id="navbar-back-btn" class="back-btn" onclick="showView('home')" style="display: none;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round" style="margin-right: 2px;">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        Back to Home
+      </button>
+
+      <div class="settings-container">
+        <button id="settings-menu-btn" class="settings-menu-btn" onclick="toggleSettingsDropdown(event)" title="Settings">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" style="display: block;">
+            <circle cx="12" cy="5" r="2"></circle>
+            <circle cx="12" cy="12" r="2"></circle>
+            <circle cx="12" cy="19" r="2"></circle>
+          </svg>
+        </button>
+        <span id="user-greeting" class="user-greeting" style="display: none;"></span>
+        <div id="settings-dropdown" class="settings-dropdown">
+          <button class="settings-item" onclick="promptForNickname()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            <span id="nickname-item-text">Add Nickname</span>
+          </button>
+          <div class="theme-selector-container">
+            <button class="settings-item" onclick="toggleThemeSelector(event)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path><circle cx="12" cy="12" r="5"></circle></svg>
+              <span>Change Theme</span>
+              <svg id="theme-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left: auto; transition: transform 0.3s ease;"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+            <div id="theme-options" class="theme-options">
+              <!-- Row 1 -->
+              <div class="theme-choice-wrapper" onclick="selectTheme(event, '')">
+                <button class="theme-circle-btn" data-theme="" title="Sweet Lavender (Default)" style="background: linear-gradient(135deg, #fbcfe8, #e0c3fc); pointer-events: none;"></button>
+                <span class="theme-label">Lavender <em class="theme-default-tag">Default</em></span>
+              </div>
+              <div class="theme-choice-wrapper" onclick="selectTheme(event, 'theme-sunset')">
+                <button class="theme-circle-btn" data-theme="theme-sunset" title="Sunset Gold" style="background: linear-gradient(135deg, #fed7aa, #fca5a5); pointer-events: none;"></button>
+                <span class="theme-label">Sunset Gold</span>
+              </div>
+              <div class="theme-choice-wrapper" onclick="selectTheme(event, 'theme-ocean')">
+                <button class="theme-circle-btn" data-theme="theme-ocean" title="Ocean Breeze" style="background: linear-gradient(135deg, #ccfbf1, #a5f3fc); pointer-events: none;"></button>
+                <span class="theme-label">Ocean Breeze</span>
+              </div>
+              <!-- Row 2 -->
+              <div class="theme-choice-wrapper" onclick="selectTheme(event, 'theme-forest')">
+                <button class="theme-circle-btn" data-theme="theme-forest" title="Forest Moss" style="background: linear-gradient(135deg, #dcfce7, #bbf7d0); pointer-events: none;"></button>
+                <span class="theme-label">Forest Moss</span>
+              </div>
+              <div class="theme-choice-wrapper" onclick="selectTheme(event, 'theme-nebula')">
+                <button class="theme-circle-btn" data-theme="theme-nebula" title="Mystic Nebula" style="background: linear-gradient(135deg, #e0e7ff, #d8b4fe); pointer-events: none;"></button>
+                <span class="theme-label">Mystic Nebula</span>
+              </div>
+              <div class="theme-choice-wrapper" onclick="selectTheme(event, 'theme-darkblue')">
+                <button class="theme-circle-btn" data-theme="theme-darkblue" title="Midnight Abyss" style="background: linear-gradient(135deg, #090d16, #1e293b); pointer-events: none;"></button>
+                <span class="theme-label">Midnight Abyss</span>
+              </div>
+              <!-- Row 3 -->
+              <div class="theme-choice-wrapper" onclick="selectTheme(event, 'theme-darkgreen')">
+                <button class="theme-circle-btn" data-theme="theme-darkgreen" title="Emerald Shadow" style="background: linear-gradient(135deg, #022c22, #0f766e); pointer-events: none;"></button>
+                <span class="theme-label">Emerald Shadow</span>
+              </div>
+              <div class="theme-choice-wrapper" onclick="selectTheme(event, 'theme-darkpurple')">
+                <button class="theme-circle-btn" data-theme="theme-darkpurple" title="Royal Velvet" style="background: linear-gradient(135deg, #1e1b4b, #4c1d95); pointer-events: none;"></button>
+                <span class="theme-label">Royal Velvet</span>
+              </div>
+            </div>
+          </div>
+          <div class="settings-divider"></div>
+          <button class="settings-item clear-data-btn" onclick="clearAllDataPrompt()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+            Clear All Data
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Dynamic SPA Home View -->
+  <div id="home-view" class="view-container">
+    <section class="facts-section">
+      <div class="text-content">
+        <div class="outbox">
+          <h2 class="heading">Crunchy little facts!</h2>
+          <p class="parallax-card">
+            <span class="parallax-content">
+              A fun and simple flashcard maker that helps you create, save, and
+              review your own study cards right in your browser. No sign-ups, no
+              hassle! Whether you're learning for school, revising for exams, or
+              just want to remember little facts, PopCard makes studying feel
+              light, quick, and interactive. Just you and your crunchy little
+              facts!
+            </span>
+          </p>
+          <div class="isection">
+            <div class="onei">
+              <img src="medal.png" height="50px" class="icon">
+              <span class="itext"> Track progress in real time</span>
+            </div>
+            <div class="onei">
+              <img src="micro.png" height="50px" class="icon">
+              <span class="itext"> Engages Multiple Memory Types</span>
+            </div>
+            <div class="onei">
+              <img src="book22.png" height="50px" class="icon">
+              <span class="itext"> Active Recall</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="green-box">
+        <div class="flashcard-header">
+          <div class="flashcard-icon"> <img src="logo4.png" height="30px"> </div>
+          <h3>Flashcards</h3>
+        </div>
+
+        <div class="card-stack">
+          <div class="flashcard stack-0">
+            <img src="cell.png" alt="Primary Cell Organelles">
+          </div>
+          <div class="flashcard stack-1">
+            <img src="wave.png" alt="Wave Physics">
+          </div>
+          <div class="flashcard stack-2">
+            <img src="revolution.png" alt="Ages of Revolution">
+          </div>
+          <div class="flashcard stack-3">
+            <img src="cone.png" alt="Volume of a Cone">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="prevCards">
+      <div class="prev-cards-header">
+        <h2 id="prev-cards-title">Your Saved Sets</h2>
+        <div id="prev-cards-actions" class="header-actions">
+          <button id="create-folder-btn" class="folder-action-btn" onclick="createFolderPrompt()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+              <line x1="12" y1="11" x2="12" y2="17"></line>
+              <line x1="9" y1="14" x2="15" y2="14"></line>
+            </svg>
+            + New Folder
+          </button>
+        </div>
+      </div>
+
+      <div id="folder-breadcrumb" class="folder-breadcrumb" style="display: none;">
+        <span class="breadcrumb-home" onclick="exitFolderView()">📁 Stacks</span> &nbsp;&gt;&nbsp; <span id="breadcrumb-folder-name" class="breadcrumb-current">Folder Name</span>
+      </div>
+
+      <div id="saved-sets-grid" class="cards-grid">
+        <!-- Dynamically loaded card sets will be injected here -->
+      </div>
+    </section>
+
+    <!-- Premium Value Showcase Section -->
+    <section class="features-section">
+      <div class="features-badge">Daily Dose of Curiosity</div>
+      <h2 class="features-title">Master any topic with <span>PopCard.</span></h2>
+      <p class="features-subtitle">PopCard turns the tedious task of memorization into a playful, candy-coated
+        experience for lifelong learners.</p>
+
+      <div class="features-buttons">
+        <button class="btn-primary-feature" onclick="showView('create')">Start Learning</button>
+        <button class="btn-secondary-feature"
+          onclick="document.querySelector('.landing-footer').scrollIntoView({ behavior: 'smooth' });">Contact Us</button>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card parallax-card">
+          <div class="feature-icon icon-purple">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+              class="feather feather-check-square">
+              <polyline points="9 11 12 14 22 4"></polyline>
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+            </svg>
+          </div>
+          <h3>Two Study Modes</h3>
+          <p>Easily switch between standard flashcards and interactive multiple-choice quizzes.</p>
+        </div>
+
+        <div class="feature-card parallax-card">
+          <div class="feature-icon icon-pink">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+              class="feather feather-folder">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+            </svg>
+          </div>
+          <h3>Organized Folders</h3>
+          <p>Keep your card stacks grouped into folders for a tidy, mess-free learning experience.</p>
+        </div>
+
+        <div class="feature-card parallax-card">
+          <div class="feature-icon icon-lavender">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+              class="feather feather-palette">
+              <path
+                d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 14.7255 3.09032 17.1962 4.85857 19C5.03443 19.1759 5.09914 19.4319 5.02452 19.6708L4.69736 20.7177C4.5453 21.2043 4.90731 21.6999 5.41686 21.6999H12Z"
+                fill="rgba(221, 164, 245, 0.15)" />
+              <circle cx="7.5" cy="10.5" r="1.5" fill="currentColor" />
+              <circle cx="11.5" cy="7.5" r="1.5" fill="currentColor" />
+              <circle cx="16.5" cy="9.5" r="1.5" fill="currentColor" />
+            </svg>
+          </div>
+          <h3>Personalized Themes</h3>
+          <p>Customize your space by changing themes according to your preference for a personal touch.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Glassmorphic Premium Footer -->
+    <footer class="landing-footer">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <div class="footer-logo">
+            <img src="ChatGPT Image Sep 6, 2025, 10_44_31 PM.png" alt="PopCard Logo" />
+            <h3>PopCard</h3>
+          </div>
+          <p class="footer-desc">
+            Crunchy little facts at your fingertips. Create, study, and remember everything effortlessly with
+            interactive flashcards.
+          </p>
+        </div>
+
+        <div class="footer-links-group">
+          <div class="footer-links-col">
+            <h4>Quick Navigation</h4>
+            <ul>
+              <li><a href="#" onclick="showView('home'); return false;">Home</a></li>
+              <li><a href="#" onclick="showView('create'); return false;">Create Stack</a></li>
+              <li><a href="#saved-sets-grid"
+                  onclick="document.querySelector('.prevCards').scrollIntoView({ behavior: 'smooth' }); return false;">My
+                  Saved Sets</a></li>
+              <li><a href="#" onclick="showCustomAlert('We would love to hear from you! Reach us at support@popcard.app for any inquiries, questions, or ideas.'); return false;">Contact Us</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-links-col">
+            <h4>Resources</h4>
+            <ul>
+              <li><a href="#"
+                  onclick="showCustomAlert('Flashcard study tip: Space out your review sessions using Spaced Repetition to maximize long-term memory retention!'); return false;">Study
+                  Tips</a></li>
+              <li><a href="#"
+                  onclick="showCustomAlert('Welcome to PopCard! Use this app to build your own study decks. Since everything is saved locally in your browser, you can study offline anytime!'); return false;">About
+                  App</a></li>
+              <li><a href="#"
+                  onclick="showCustomAlert('If you ever need to reset the app, you can delete individual stacks, or clear your browser data to start fresh.'); return false;">Help
+                  & FAQ</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p class="footer-copy">&copy; 2026 PopCard. Made with 💖 for sweet learning and bright ideas.</p>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Dynamic SPA Creator View -->
+  <div id="creator-view" class="view-container" style="display: none;">
+    <div class="creator-container">
+      <div class="glass-panel">
+        <div class="creator-header">
+          <h2>Create a Card Stack</h2>
+          <p>Type out the information on each card and the cue behind it to build your custom deck.</p>
+        </div>
+
+        <form id="deck-form" onsubmit="saveDeck(event)">
+          <!-- Stack Name Input -->
+          <div class="form-group">
+            <label for="stack-name">Stack Name</label>
+            <input type="text" id="stack-name" class="text-input"
+              placeholder="e.g. Spanish Vocabulary, History Facts, Biology Terminology..." required autocomplete="off">
+          </div>
+
+          <!-- Stack Type Toggle -->
+          <div class="form-group">
+            <label>Stack Mode</label>
+            <div class="mode-selector">
+              <button type="button" id="mode-btn-standard" class="mode-btn active" onclick="switchStackMode('standard')">Standard Flashcards</button>
+              <button type="button" id="mode-btn-mcq" class="mode-btn" onclick="switchStackMode('mcq')">Multiple Choice (MCQ)</button>
+            </div>
+            <input type="hidden" id="stack-type" value="standard">
+          </div>
+
+          <!-- Target Folder Selection -->
+          <div class="form-group">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <label style="font-family: 'Fredoka', sans-serif; font-size: 16px; font-weight: 600; color: #4a3c54; margin-bottom: 0;">Target Folder</label>
+              <button type="button" class="create-folder-inline-btn" onclick="createFolderFromCreator()">+ Create a Folder</button>
+            </div>
+            
+            <div class="custom-select" id="deck-folder-custom-select">
+              <div class="custom-select-trigger" onclick="toggleCustomSelect(event)">
+                <span id="custom-select-trigger-text">No Folder (Ungrouped)</span>
+                <svg class="custom-select-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </div>
+              <div class="custom-select-options" id="custom-select-options-list">
+                <!-- Dynamic folder options will be loaded here -->
+              </div>
+            </div>
+            <input type="hidden" id="deck-folder-select" value="">
+          </div>
+
+          <!-- Deck Size Selector -->
+          <div class="deck-controls">
+            <label style="font-family: 'Fredoka', sans-serif; font-size: 16px; font-weight: 600; color: #4a3c54;">Cards
+              in Deck</label>
+            <div class="count-selector">
+              <button type="button" class="count-btn" onclick="adjustCount(-1)">&minus;</button>
+              <span id="count-display" class="count-display">3</span>
+              <button type="button" class="count-btn" onclick="adjustCount(1)">&plus;</button>
+            </div>
+            <div class="action-links">
+              <button type="button" class="btn-secondary" onclick="addCardRow()">+ Add Card</button>
+            </div>
+          </div>
+
+          <!-- Dynamic Cards Input List -->
+          <div id="cards-container" class="cards-editor-list">
+            <!-- Card Row 1 -->
+            <div class="card-editor-row" data-index="1">
+              <div class="card-row-header">
+                <span class="card-number">Card #1</span>
+                <button type="button" class="delete-row-btn" onclick="deleteCardRow(this)">Delete Card</button>
+              </div>
+              <div class="card-inputs-grid">
+                <div class="card-side-editor">
+                  <label>Front: Cue or Question</label>
+                  <div class="input-speech-wrapper">
+                    <textarea class="card-textarea front-input" placeholder="Enter term, question, or fact..." required></textarea>
+                    <button type="button" class="speech-btn" onclick="toggleVoiceTyping(this)" title="Voice Typing">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                        <line x1="12" y1="19" x2="12" y2="23"></line>
+                        <line x1="8" y1="23" x2="16" y2="23"></line>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+                <div class="card-side-editor">
+                  <label>Back: Answer</label>
+                  <div class="input-speech-wrapper">
+                    <textarea class="card-textarea back-input" placeholder="Enter definition, answer, or clue..." required></textarea>
+                    <button type="button" class="speech-btn" onclick="toggleVoiceTyping(this)" title="Voice Typing">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                        <line x1="12" y1="19" x2="12" y2="23"></line>
+                        <line x1="8" y1="23" x2="16" y2="23"></line>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Card Row 2 -->
+            <div class="card-editor-row" data-index="2">
+              <div class="card-row-header">
+                <span class="card-number">Card #2</span>
+                <button type="button" class="delete-row-btn" onclick="deleteCardRow(this)">Delete Card</button>
+              </div>
+              <div class="card-inputs-grid">
+                <div class="card-side-editor">
+                  <label>Front: Cue or Question</label>
+                  <div class="input-speech-wrapper">
+                    <textarea class="card-textarea front-input" placeholder="Enter term, question, or fact..." required></textarea>
+                    <button type="button" class="speech-btn" onclick="toggleVoiceTyping(this)" title="Voice Typing">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                        <line x1="12" y1="19" x2="12" y2="23"></line>
+                        <line x1="8" y1="23" x2="16" y2="23"></line>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+                <div class="card-side-editor">
+                  <label>Back: Answer</label>
+                  <div class="input-speech-wrapper">
+                    <textarea class="card-textarea back-input" placeholder="Enter definition, answer, or clue..." required></textarea>
+                    <button type="button" class="speech-btn" onclick="toggleVoiceTyping(this)" title="Voice Typing">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                        <line x1="12" y1="19" x2="12" y2="23"></line>
+                        <line x1="8" y1="23" x2="16" y2="23"></line>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Card Row 3 -->
+            <div class="card-editor-row" data-index="3">
+              <div class="card-row-header">
+                <span class="card-number">Card #3</span>
+                <button type="button" class="delete-row-btn" onclick="deleteCardRow(this)">Delete Card</button>
+              </div>
+              <div class="card-inputs-grid">
+                <div class="card-side-editor">
+                  <label>Front: Cue or Question</label>
+                  <div class="input-speech-wrapper">
+                    <textarea class="card-textarea front-input" placeholder="Enter term, question, or fact..." required></textarea>
+                    <button type="button" class="speech-btn" onclick="toggleVoiceTyping(this)" title="Voice Typing">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                        <line x1="12" y1="19" x2="12" y2="23"></line>
+                        <line x1="8" y1="23" x2="16" y2="23"></line>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+                <div class="card-side-editor">
+                  <label>Back: Answer</label>
+                  <div class="input-speech-wrapper">
+                    <textarea class="card-textarea back-input" placeholder="Enter definition, answer, or clue..." required></textarea>
+                    <button type="button" class="speech-btn" onclick="toggleVoiceTyping(this)" title="Voice Typing">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                        <line x1="12" y1="19" x2="12" y2="23"></line>
+                        <line x1="8" y1="23" x2="16" y2="23"></line>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Submit Area -->
+          <div class="submit-area">
+            <button type="submit" class="save-deck-btn">Save Stack</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // --- Hamburger Settings & Themes Controller ---
+      window.toggleSettingsDropdown = function (event) {
+        if (event) event.stopPropagation();
+        const dropdown = document.getElementById('settings-dropdown');
+        if (dropdown) {
+          dropdown.classList.toggle('active');
+        }
+      };
+
+      // Close dropdown if clicking outside
+      document.addEventListener('click', (e) => {
+        const dropdown = document.getElementById('settings-dropdown');
+        const settingsContainer = document.querySelector('.settings-container');
+        if (dropdown && settingsContainer && !settingsContainer.contains(e.target)) {
+          dropdown.classList.remove('active');
+        }
+      });
+
+      // Customized Prompt for Nickname
+      window.showNicknamePrompt = function (message, placeholder, defaultValue, callback) {
+        const overlay = document.createElement('div');
+        overlay.className = 'custom-popup-overlay';
+
+        const box = document.createElement('div');
+        box.className = 'custom-popup-box';
+        box.innerHTML = `
+            <div class="custom-popup-header">
+              <div class="custom-popup-icon">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--theme-primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 2px 8px var(--theme-secondary-glow));"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+              </div>
+              <h3>Choose Nickname</h3>
+            </div>
+            <div class="custom-popup-message" style="margin-bottom: 15px;">${message}</div>
+            <div style="padding: 0 25px 15px 25px;">
+              <input type="text" id="nickname-prompt-input" class="text-input" placeholder="${placeholder}" value="${defaultValue}" autocomplete="off" style="width: 100%; border: 1px solid var(--theme-input-border); border-radius: 12px; padding: 10px 14px; font-family: 'Quicksand', sans-serif; font-size: 15px;">
+            </div>
+            <div class="custom-popup-buttons">
+              <button class="custom-popup-btn custom-popup-btn-secondary">Cancel</button>
+              <button class="custom-popup-btn custom-popup-btn-primary">Save</button>
+            </div>
+          `;
+
+        overlay.appendChild(box);
+        document.body.appendChild(overlay);
+
+        setTimeout(() => overlay.classList.add('active'), 10);
+
+        const input = box.querySelector('#nickname-prompt-input');
+        const cancelBtn = box.querySelector('.custom-popup-btn-secondary');
+        const saveBtn = box.querySelector('.custom-popup-btn-primary');
+
+        setTimeout(() => input.focus(), 150);
+
+        cancelBtn.onclick = () => {
+          overlay.classList.remove('active');
+          setTimeout(() => overlay.remove(), 300);
+        };
+
+        const submitAction = () => {
+          const val = input.value.trim();
+          overlay.classList.remove('active');
+          setTimeout(() => {
+            overlay.remove();
+            callback(val);
+          }, 300);
+        };
+
+        saveBtn.onclick = submitAction;
+        input.onkeydown = (e) => {
+          if (e.key === 'Enter') submitAction();
+        };
+      };
+
+      window.promptForNickname = function () {
+        // Dismiss dropdown
+        const dropdown = document.getElementById('settings-dropdown');
+        if (dropdown) dropdown.classList.remove('active');
+
+        const currentNickname = localStorage.getItem('popcard_nickname') || '';
+        window.showNicknamePrompt(
+          "Enter your name to personalize your study space:",
+          "Your nickname...",
+          currentNickname,
+          (name) => {
+            if (name) {
+              localStorage.setItem('popcard_nickname', name);
+              showCustomAlert(`Awesome! Nicely set to "${name}".`);
+            } else {
+              localStorage.removeItem('popcard_nickname');
+              showCustomAlert("Nickname cleared.");
+            }
+            updateNicknameUI();
+          }
+        );
+      };
+
+      window.updateNicknameUI = function () {
+        const name = localStorage.getItem('popcard_nickname');
+        const greetingSpan = document.getElementById('user-greeting');
+        const nicknameItemText = document.getElementById('nickname-item-text');
+        const settingsMenuBtn = document.getElementById('settings-menu-btn');
+
+        const catFaceSvg = `<svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" style="display: block; border-radius: 50%;">
+  <circle cx="12" cy="12" r="11.5" fill="#e1dbf7" />
+  <!-- Left Ear -->
+  <path d="M5 10.5 L3.5 4 L9 9 Z" fill="#b5adbe" stroke="#4a3c54" stroke-width="1.2" stroke-linejoin="round" />
+  <path d="M5.5 9.8 L4.1 4.9 L8.3 8.3 Z" fill="#ffb7b2" />
+  <!-- Right Ear -->
+  <path d="M19 10.5 L20.5 4 L15 9 Z" fill="#b5adbe" stroke="#4a3c54" stroke-width="1.2" stroke-linejoin="round" />
+  <path d="M18.5 9.8 L19.9 4.9 L15.7 8.3 Z" fill="#ffb7b2" />
+  <!-- Head Outline -->
+  <path d="M4.5 12.5 C4.5 17.5 7.8 20.5 12 20.5 C16.2 20.5 19.5 17.5 19.5 12.5 C19.5 9.5 16.5 9.5 12 9.5 C7.5 9.5 4.5 9.5 4.5 12.5 Z" fill="#ffffff" stroke="#4a3c54" stroke-width="1.2" stroke-linejoin="round" />
+  <!-- Grey Forehead Patches -->
+  <path d="M4.6 12.5 C4.6 10 7.5 9.5 10 11.5 C9 14 6.5 15.5 4.8 15.8 C4.7 14.8 4.6 13.7 4.6 12.5 Z" fill="#b5adbe" />
+  <path d="M19.4 12.5 C19.4 10 16.5 9.5 14 11.5 C15 14 17.5 15.5 19.2 15.8 C19.3 14.8 19.4 13.7 19.4 12.5 Z" fill="#b5adbe" />
+  <!-- Forehead Stripes -->
+  <path d="M11 9.8 V12" stroke="#8c8295" stroke-width="0.8" stroke-linecap="round" />
+  <path d="M12 9.8 V12.5" stroke="#8c8295" stroke-width="0.8" stroke-linecap="round" />
+  <path d="M13 9.8 V12" stroke="#8c8295" stroke-width="0.8" stroke-linecap="round" />
+  <!-- Eyes -->
+  <circle cx="8" cy="14" r="1.3" fill="#2d2533" />
+  <circle cx="7.6" cy="13.6" r="0.4" fill="#ffffff" />
+  <circle cx="16" cy="14" r="1.3" fill="#2d2533" />
+  <circle cx="15.6" cy="13.6" r="0.4" fill="#ffffff" />
+  <!-- Nose -->
+  <polygon points="11.3,15 12.7,15 12,15.7" fill="#ff9ebb" stroke="#4a3c54" stroke-width="0.4" stroke-linejoin="round" />
+  <!-- Mouth -->
+  <path d="M10.8 16.3 C11.2 16.8 12 16.8 12 16.3 C12 16.8 12.8 16.8 13.2 16.3" stroke="#4a3c54" stroke-width="1.2" stroke-linecap="round" fill="none" />
+  <!-- Whiskers -->
+  <path d="M5.5 14.5 H2" stroke="#4a3c54" stroke-width="0.8" stroke-linecap="round" />
+  <path d="M5.5 15.8 L2.5 16.5" stroke="#4a3c54" stroke-width="0.8" stroke-linecap="round" />
+  <path d="M18.5 14.5 H22" stroke="#4a3c54" stroke-width="0.8" stroke-linecap="round" />
+  <path d="M18.5 15.8 L21.5 16.5" stroke="#4a3c54" stroke-width="0.8" stroke-linecap="round" />
+</svg>`;
+
+        const dotsSvg = `<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" style="display: block;">
+  <circle cx="12" cy="5" r="2"></circle>
+  <circle cx="12" cy="12" r="2"></circle>
+  <circle cx="12" cy="19" r="2"></circle>
+</svg>`;
+
+        if (name) {
+          if (settingsMenuBtn) {
+            settingsMenuBtn.innerHTML = catFaceSvg;
+          }
+          if (greetingSpan) {
+            greetingSpan.innerHTML = `Hi, <strong>${name}</strong> !`;
+            greetingSpan.style.display = 'block';
+          }
+          if (nicknameItemText) {
+            nicknameItemText.textContent = "Change Nickname";
+          }
+        } else {
+          if (settingsMenuBtn) {
+            settingsMenuBtn.innerHTML = dotsSvg;
+          }
+          if (greetingSpan) {
+            greetingSpan.style.display = 'none';
+            greetingSpan.innerHTML = '';
+          }
+          if (nicknameItemText) {
+            nicknameItemText.textContent = "Add Nickname";
+          }
+        }
+      };
+
+      // Theme Dynamic Selector Layer
+      const THEMES = [
+        { class: '', name: 'Sweet Lavender (Default)' },
+        { class: 'theme-sunset', name: 'Sunset Gold' },
+        { class: 'theme-ocean', name: 'Ocean Breeze' },
+        { class: 'theme-forest', name: 'Forest Moss' },
+        { class: 'theme-nebula', name: 'Mystic Nebula' },
+        { class: 'theme-darkblue', name: 'Midnight Abyss' },
+        { class: 'theme-darkgreen', name: 'Emerald Shadow' },
+        { class: 'theme-darkpurple', name: 'Royal Velvet' }
+      ];
+
+      window.toggleThemeSelector = function (event) {
+        if (event) {
+          event.stopPropagation();
+        }
+        const options = document.getElementById('theme-options');
+        const chevron = document.getElementById('theme-chevron');
+        if (options) {
+          options.classList.toggle('active');
+          if (options.classList.contains('active')) {
+            if (chevron) chevron.style.transform = 'rotate(180deg)';
+          } else {
+            if (chevron) chevron.style.transform = 'rotate(0deg)';
+          }
+        }
+      };
+
+      window.updateThemeSelectorUI = function () {
+        const activeTheme = localStorage.getItem('popcard_theme') || '';
+        
+        // 1. Highlight active button circle
+        const buttons = document.querySelectorAll('.theme-circle-btn');
+        buttons.forEach(btn => {
+          if (btn.getAttribute('data-theme') === activeTheme) {
+            btn.classList.add('active');
+          } else {
+            btn.classList.remove('active');
+          }
+        });
+
+        // 2. Highlight active choice wrapper (for bold purple text labels)
+        const wrappers = document.querySelectorAll('.theme-choice-wrapper');
+        wrappers.forEach(wrap => {
+          const btn = wrap.querySelector('.theme-circle-btn');
+          if (btn && btn.getAttribute('data-theme') === activeTheme) {
+            wrap.classList.add('active');
+          } else {
+            wrap.classList.remove('active');
+          }
+        });
+      };
+
+      window.selectTheme = function (event, themeClass) {
+        if (event) {
+          event.stopPropagation();
+        }
+
+        // Apply theme class to body
+        THEMES.forEach(t => {
+          if (t.class) {
+            document.body.classList.remove(t.class);
+          }
+        });
+        
+        if (themeClass) {
+          document.body.classList.add(themeClass);
+          localStorage.setItem('popcard_theme', themeClass);
+        } else {
+          localStorage.removeItem('popcard_theme');
+        }
+
+        updateThemeSelectorUI();
+
+        // Close the settings dropdown after a short delay so the selection feels snappy
+        setTimeout(() => {
+          const dropdown = document.getElementById('settings-dropdown');
+          if (dropdown) dropdown.classList.remove('active');
+          // Also collapse the theme sub-panel
+          const themeOptions = document.getElementById('theme-options');
+          const chevron = document.getElementById('theme-chevron');
+          if (themeOptions) themeOptions.classList.remove('active');
+          if (chevron) chevron.style.transform = 'rotate(0deg)';
+        }, 200);
+      };
+
+      window.applySavedTheme = function () {
+        const savedThemeClass = localStorage.getItem('popcard_theme') || '';
+        THEMES.forEach(t => {
+          if (t.class) {
+            document.body.classList.remove(t.class);
+          }
+        });
+        if (savedThemeClass) {
+          document.body.classList.add(savedThemeClass);
+        }
+        updateThemeSelectorUI();
+      };
+
+      // Clear all data custom prompt logic
+      window.clearAllDataPrompt = function () {
+        // Dismiss dropdown
+        const dropdown = document.getElementById('settings-dropdown');
+        if (dropdown) dropdown.classList.remove('active');
+
+        // Reuse our custom pink confirm modal with custom text
+        const overlay = document.createElement('div');
+        overlay.className = 'custom-popup-overlay';
+
+        const box = document.createElement('div');
+        box.className = 'custom-popup-box';
+        box.innerHTML = `
+            <div class="custom-popup-header">
+              <div class="custom-popup-icon">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ff758f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 2px 8px rgba(255,117,143,0.3));"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+              </div>
+              <h3>Danger Zone</h3>
+            </div>
+            <div class="custom-popup-message">Are you absolutely sure you want to clear ALL data? This will permanently delete all folders, saved card stacks, nickname, and theme preferences. This action cannot be undone!</div>
+            <div class="custom-popup-buttons">
+              <button class="custom-popup-btn custom-popup-btn-secondary">Cancel</button>
+              <button class="custom-popup-btn custom-popup-btn-danger">Yes, Clear Everything</button>
+            </div>
+          `;
+
+        overlay.appendChild(box);
+        document.body.appendChild(overlay);
+
+        setTimeout(() => overlay.classList.add('active'), 10);
+
+        const cancelBtn = box.querySelector('.custom-popup-btn-secondary');
+        const confirmBtn = box.querySelector('.custom-popup-btn-danger');
+
+        cancelBtn.onclick = () => {
+          overlay.classList.remove('active');
+          setTimeout(() => overlay.remove(), 300);
+        };
+
+        confirmBtn.onclick = () => {
+          overlay.classList.remove('active');
+          setTimeout(() => {
+            overlay.remove();
+            
+            // Clear all data to an empty slate
+            localStorage.setItem('popcard_decks', '[]');
+            localStorage.setItem('popcard_folders', '[]');
+            localStorage.removeItem('popcard_nickname');
+            localStorage.removeItem('popcard_theme');
+
+            // Apply default lavender theme and reset UI
+            THEMES.forEach(t => {
+              if (t.class) document.body.classList.remove(t.class);
+            });
+
+            showCustomAlert("All application data successfully cleared!", () => {
+              // Reload page to reinitialize clean defaults
+              window.location.reload();
+            });
+          }, 300);
+        };
+      };
+
+      // Apply startup configs
+      applySavedTheme();
+      updateNicknameUI();
+
+      // Custom Pink Glassmorphic Alert System
+      window.showCustomAlert = function (message, callback) {
+        const overlay = document.createElement('div');
+        overlay.className = 'custom-popup-overlay';
+
+        const box = document.createElement('div');
+        box.className = 'custom-popup-box';
+        box.innerHTML = `
+            <div class="custom-popup-header">
+              <div class="custom-popup-icon">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--theme-primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 2px 8px var(--theme-secondary-glow));"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+              </div>
+              <h3>Notification</h3>
+            </div>
+            <div class="custom-popup-message">${message}</div>
+            <div class="custom-popup-buttons">
+              <button class="custom-popup-btn custom-popup-btn-primary">OK</button>
+            </div>
+          `;
+
+        overlay.appendChild(box);
+        document.body.appendChild(overlay);
+
+        setTimeout(() => overlay.classList.add('active'), 10);
+
+        const okBtn = box.querySelector('.custom-popup-btn-primary');
+        okBtn.focus();
+        okBtn.onclick = () => {
+          overlay.classList.remove('active');
+          setTimeout(() => {
+            overlay.remove();
+            if (callback) callback();
+          }, 300);
+        };
+      };
+
+      window.showCustomConfirm = function (message, onYes, onNo) {
+        const overlay = document.createElement('div');
+        overlay.className = 'custom-popup-overlay';
+
+        const box = document.createElement('div');
+        box.className = 'custom-popup-box';
+        box.innerHTML = `
+            <div class="custom-popup-header">
+              <div class="custom-popup-icon">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ff758f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 2px 8px rgba(255,117,143,0.3));"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+              </div>
+              <h3>Confirm Action</h3>
+            </div>
+            <div class="custom-popup-message">${message}</div>
+            <div class="custom-popup-buttons">
+              <button class="custom-popup-btn custom-popup-btn-secondary">Cancel</button>
+              <button class="custom-popup-btn custom-popup-btn-danger">Yes, Delete</button>
+            </div>
+          `;
+
+        overlay.appendChild(box);
+        document.body.appendChild(overlay);
+
+        setTimeout(() => overlay.classList.add('active'), 10);
+
+        const cancelBtn = box.querySelector('.custom-popup-btn-secondary');
+        const confirmBtn = box.querySelector('.custom-popup-btn-danger');
+
+        cancelBtn.onclick = () => {
+          overlay.classList.remove('active');
+          setTimeout(() => {
+            overlay.remove();
+            if (onNo) onNo();
+          }, 300);
+        };
+
+        confirmBtn.onclick = () => {
+          overlay.classList.remove('active');
+          setTimeout(() => {
+            overlay.remove();
+            if (onYes) onYes();
+          }, 300);
+        };
+      };
+
+      // Folder system state
+      let currentFolderId = null;
+
+      window.showCustomPrompt = function (message, placeholder, callback) {
+        const overlay = document.createElement('div');
+        overlay.className = 'custom-popup-overlay';
+
+        const box = document.createElement('div');
+        box.className = 'custom-popup-box';
+        box.innerHTML = `
+            <div class="custom-popup-header">
+              <div class="custom-popup-icon">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--theme-primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 2px 8px var(--theme-secondary-glow));"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+              </div>
+              <h3>New Folder</h3>
+            </div>
+            <div class="custom-popup-message" style="margin-bottom: 15px;">${message}</div>
+            <div style="padding: 0 25px 15px 25px;">
+              <input type="text" id="custom-prompt-input" class="text-input" placeholder="${placeholder}" autocomplete="off" style="width: 100%; border: 1px solid var(--theme-input-border); border-radius: 12px; padding: 10px 14px; font-family: 'Quicksand', sans-serif; font-size: 15px;">
+            </div>
+            <div class="custom-popup-buttons">
+              <button class="custom-popup-btn custom-popup-btn-secondary">Cancel</button>
+              <button class="custom-popup-btn custom-popup-btn-primary">Create</button>
+            </div>
+          `;
+
+        overlay.appendChild(box);
+        document.body.appendChild(overlay);
+
+        setTimeout(() => overlay.classList.add('active'), 10);
+
+        const input = box.querySelector('#custom-prompt-input');
+        const cancelBtn = box.querySelector('.custom-popup-btn-secondary');
+        const createBtn = box.querySelector('.custom-popup-btn-primary');
+
+        setTimeout(() => input.focus(), 150);
+
+        cancelBtn.onclick = () => {
+          overlay.classList.remove('active');
+          setTimeout(() => overlay.remove(), 300);
+        };
+
+        const submitAction = () => {
+          const val = input.value.trim();
+          if (!val) {
+            showCustomAlert("Folder name cannot be empty!");
+            return;
+          }
+          overlay.classList.remove('active');
+          setTimeout(() => {
+            overlay.remove();
+            if (callback) callback(val);
+          }, 300);
+        };
+
+        createBtn.onclick = submitAction;
+        input.onkeydown = (e) => {
+          if (e.key === 'Enter') submitAction();
+        };
+      };
+
+      window.createFolderPrompt = function () {
+        showCustomPrompt("Enter a name for your new folder stack grouping:", "e.g. Science, Exams, Languages", (name) => {
+          let folders = [];
+          const stored = localStorage.getItem('popcard_folders');
+          if (stored) {
+            try {
+              folders = JSON.parse(stored);
+            } catch (e) {
+              folders = [];
+            }
+          }
+
+          const newFolder = {
+            id: Date.now(),
+            name: name
+          };
+
+          folders.push(newFolder);
+          localStorage.setItem('popcard_folders', JSON.stringify(folders));
+          loadSavedDecks();
+        });
+      };
+
+      window.deleteFolder = function (folderId, event) {
+        if (event) event.stopPropagation(); // Prevent entering folder view on click!
+
+        showCustomConfirm("Are you sure you want to delete this folder? The stacks inside this folder will not be deleted, they will simply be ungrouped.", () => {
+          let folders = [];
+          const storedF = localStorage.getItem('popcard_folders');
+          if (storedF) {
+            try { folders = JSON.parse(storedF); } catch(e) {}
+          }
+          folders = folders.filter(f => f.id !== folderId);
+          localStorage.setItem('popcard_folders', JSON.stringify(folders));
+
+          // Ungroup stacks in this folder
+          let decks = [];
+          const storedD = localStorage.getItem('popcard_decks');
+          if (storedD) {
+            try { decks = JSON.parse(storedD); } catch(e) {}
+          }
+          decks.forEach(deck => {
+            if (deck.folderId === folderId) {
+              deck.folderId = null;
+            }
+          });
+          localStorage.setItem('popcard_decks', JSON.stringify(decks));
+
+          if (currentFolderId === folderId) {
+            currentFolderId = null;
+          }
+
+          loadSavedDecks();
+        });
+      };
+
+      // Folder Picker Popover and Move Stack logic
+      let activeDeckIdForMove = null;
+
+      window.openFolderPicker = function (deckId, event) {
+        if (event) event.stopPropagation(); // Avoid opening the review modal on card click!
+        activeDeckIdForMove = deckId;
+
+        const picker = document.getElementById('folder-picker');
+        const optionsList = document.getElementById('folder-picker-options');
+        if (!picker || !optionsList) return;
+
+        // Clear existing options
+        optionsList.innerHTML = '';
+
+        // Load folders
+        let folders = [];
+        const storedF = localStorage.getItem('popcard_folders');
+        if (storedF) {
+          try { folders = JSON.parse(storedF); } catch (e) {}
+        }
+
+        // Load decks to find the current folder of this deck
+        let decks = [];
+        const storedD = localStorage.getItem('popcard_decks');
+        if (storedD) {
+          try { decks = JSON.parse(storedD); } catch (e) {}
+        }
+        const deck = decks.find(d => d.id === deckId);
+        const currentDeckFolderId = deck ? deck.folderId : null;
+
+        // 1. Add "No Folder (Ungrouped)" option
+        const ungroupedItem = document.createElement('div');
+        ungroupedItem.className = 'folder-option-item';
+        if (!currentDeckFolderId) {
+          ungroupedItem.classList.add('active');
+        }
+        ungroupedItem.innerHTML = `
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+          </svg>
+          <span>No Folder (Ungrouped)</span>
+        `;
+        ungroupedItem.onclick = () => {
+          moveDeckToFolder(null);
+        };
+        optionsList.appendChild(ungroupedItem);
+
+        // 2. Add folder options
+        folders.forEach(f => {
+          const item = document.createElement('div');
+          item.className = 'folder-option-item';
+          if (currentDeckFolderId === f.id) {
+            item.classList.add('active');
+          }
+          item.innerHTML = `
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+            </svg>
+            <span>${f.name}</span>
+          `;
+          item.onclick = () => {
+            moveDeckToFolder(f.id);
+          };
+          optionsList.appendChild(item);
+        });
+
+        // Show picker
+        picker.classList.add('active');
+      };
+
+      window.closeFolderPicker = function () {
+        const picker = document.getElementById('folder-picker');
+        if (picker) {
+          picker.classList.remove('active');
+        }
+        activeDeckIdForMove = null;
+      };
+
+      window.moveDeckToFolder = function (folderId) {
+        if (!activeDeckIdForMove) return;
+
+        // Load decks
+        let decks = [];
+        const storedD = localStorage.getItem('popcard_decks');
+        if (storedD) {
+          try { decks = JSON.parse(storedD); } catch (e) {}
+        }
+
+        const deckIndex = decks.findIndex(d => d.id === activeDeckIdForMove);
+        if (deckIndex !== -1) {
+          decks[deckIndex].folderId = folderId;
+          localStorage.setItem('popcard_decks', JSON.stringify(decks));
+        }
+
+        closeFolderPicker();
+        loadSavedDecks();
+      };
+
+      // Custom Dropdown select controllers & inline folder creator
+      window.toggleCustomSelect = function (event) {
+        if (event) event.stopPropagation();
+        const customSelect = document.getElementById('deck-folder-custom-select');
+        if (customSelect) {
+          customSelect.classList.toggle('active');
+        }
+      };
+
+      window.selectCustomOption = function (value, text) {
+        const hiddenInput = document.getElementById('deck-folder-select');
+        const triggerText = document.getElementById('custom-select-trigger-text');
+        const customSelect = document.getElementById('deck-folder-custom-select');
+        const optionsList = document.getElementById('custom-select-options-list');
+
+        if (hiddenInput) hiddenInput.value = value;
+        if (triggerText) triggerText.textContent = text;
+        if (customSelect) customSelect.classList.remove('active');
+
+        // Highlight selected item in options list
+        if (optionsList) {
+          const items = optionsList.querySelectorAll('.custom-select-option');
+          items.forEach(item => {
+            if (item.getAttribute('data-value') == value) {
+              item.classList.add('selected');
+            } else {
+              item.classList.remove('selected');
+            }
+          });
+        }
+      };
+
+      window.createFolderFromCreator = function () {
+        showCustomPrompt("Enter a name for your new folder stack grouping:", "e.g. Science, Exams, Languages", (name) => {
+          let folders = [];
+          const stored = localStorage.getItem('popcard_folders');
+          if (stored) {
+            try { folders = JSON.parse(stored); } catch (e) { folders = []; }
+          }
+
+          const newFolder = {
+            id: Date.now(),
+            name: name
+          };
+
+          folders.push(newFolder);
+          localStorage.setItem('popcard_folders', JSON.stringify(folders));
+
+          // Refresh options list & pre-select the newly created folder
+          showView('create');
+          selectCustomOption(newFolder.id, newFolder.name);
+        });
+      };
+
+      // Close custom select dropdown when clicking outside
+      document.addEventListener('click', (e) => {
+        const customSelect = document.getElementById('deck-folder-custom-select');
+        if (customSelect && !customSelect.contains(e.target)) {
+          customSelect.classList.remove('active');
+        }
+      });
+
+      // SPA View Controller
+      window.showView = function (viewName) {
+        const homeView = document.getElementById('home-view');
+        const creatorView = document.getElementById('creator-view');
+        const searchBar = document.querySelector('.search-bar');
+        const createBtn = document.getElementById('navbar-create-btn');
+        const backBtn = document.getElementById('navbar-back-btn');
+
+        if (viewName === 'create') {
+          homeView.style.display = 'none';
+          creatorView.style.display = 'block';
+          if (searchBar) searchBar.style.display = 'none';
+          if (createBtn) createBtn.style.display = 'none';
+          if (backBtn) backBtn.style.display = 'inline-flex';
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+
+          // Focus on stack name input automatically
+          const stackInput = document.getElementById('stack-name');
+          if (stackInput) {
+            setTimeout(() => stackInput.focus(), 150);
+          }
+
+          // Populate the target folder custom selector
+          const folderOptionsContainer = document.getElementById('custom-select-options-list');
+          const folderHiddenInput = document.getElementById('deck-folder-select');
+          const triggerText = document.getElementById('custom-select-trigger-text');
+          
+          if (folderOptionsContainer && folderHiddenInput && triggerText) {
+            folderOptionsContainer.innerHTML = '';
+            
+            let folders = [];
+            const storedF = localStorage.getItem('popcard_folders');
+            if (storedF) {
+              try { folders = JSON.parse(storedF); } catch (e) {}
+            }
+
+            // Create options array: standard "No Folder" first
+            const options = [{ id: '', name: 'No Folder (Ungrouped)' }, ...folders];
+
+            options.forEach(opt => {
+              const div = document.createElement('div');
+              div.className = 'custom-select-option';
+              div.setAttribute('data-value', opt.id);
+              
+              // Custom option svg icon
+              let iconSvg = '';
+              if (opt.id === '') {
+                iconSvg = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></svg>`;
+              } else {
+                iconSvg = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>`;
+              }
+              
+              div.innerHTML = `${iconSvg} <span>${opt.name}</span>`;
+              
+              div.onclick = () => {
+                selectCustomOption(opt.id, opt.name);
+              };
+              
+              folderOptionsContainer.appendChild(div);
+            });
+
+            // Set initial selected option
+            let initialId = '';
+            let initialName = 'No Folder (Ungrouped)';
+            
+            if (currentFolderId) {
+              const activeFolder = folders.find(f => f.id === currentFolderId);
+              if (activeFolder) {
+                initialId = activeFolder.id;
+                initialName = activeFolder.name;
+              }
+            }
+            
+            selectCustomOption(initialId, initialName);
+          }
+        } else {
+          homeView.style.display = 'block';
+          creatorView.style.display = 'none';
+          if (searchBar) searchBar.style.display = 'block';
+          if (createBtn) createBtn.style.display = 'block';
+          if (backBtn) backBtn.style.display = 'none';
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+
+          // Reset creator form inputs on return
+          resetCreatorForm();
+
+          // Reload the saved sets dynamically
+          const currentFilter = searchBar ? searchBar.value : '';
+          loadSavedDecks(currentFilter);
+        }
+      };
+
+      // SPA URL Routing
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('view') === 'create') {
+        showView('create');
+        // Clean up URL silently so refreshes don't force creator
+        const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+        window.history.replaceState({ path: cleanUrl }, '', cleanUrl);
+      }
+
+      // Parallax Card Hover Tilt Effect
+      const cards = document.querySelectorAll('.parallax-card');
+
+      cards.forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+
+          const centerX = rect.width / 2;
+          const centerY = rect.height / 2;
+
+          const rotateX = -((y - centerY) / centerY) * 12;
+          const rotateY = ((x - centerX) / centerX) * 12;
+
+          card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+        });
+
+        card.addEventListener('mouseleave', () => {
+          card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+        });
+      });
+
+      // 3D Card Stack Auto-swipe Carousel
+      const stack = document.querySelector('.card-stack');
+      if (stack) {
+        const cardsArray = Array.from(stack.querySelectorAll('.flashcard'));
+        let isPaused = false;
+        let swipeDirectionLeft = true; // Alternate swipe directions
+
+        function updateStackVisuals() {
+          cardsArray.forEach((card, index) => {
+            card.className = 'flashcard';
+            card.classList.add(`stack-${index}`);
+          });
+        }
+
+        function swipeCard() {
+          if (isPaused) return;
+
+          const topCard = cardsArray[0];
+          const directionClass = swipeDirectionLeft ? 'swipe-left' : 'swipe-right';
+          swipeDirectionLeft = !swipeDirectionLeft; // Toggle for opposite swipe next time
+
+          // 1. Add swipe animation class to top card
+          topCard.classList.add(directionClass);
+          topCard.style.pointerEvents = 'none';
+
+          // 2. Instantly update the remaining cards' visual stack positions
+          const nextCards = cardsArray.slice(1);
+          nextCards.forEach((card, index) => {
+            card.className = 'flashcard';
+            card.classList.add(`stack-${index}`);
+          });
+
+          // 3. After transition completes, cycle the array and place the card at the bottom
+          setTimeout(() => {
+            cardsArray.shift();
+            cardsArray.push(topCard);
+
+            // Instantly teleport the card to stack-2 position off-screen
+            topCard.style.transition = 'none';
+            topCard.className = 'flashcard stack-2';
+
+            // Force reflow
+            topCard.offsetHeight;
+
+            // Restore transition and update all classes to guarantee perfect state
+            topCard.style.transition = '';
+            updateStackVisuals();
+          }, 600); // Matches CSS transition duration
+        }
+
+        // Auto-swipe interval (2.0 seconds for faster changes)
+        let autoSwipeInterval = setInterval(swipeCard, 2000);
+
+        // Pause auto-swipe on green-box hover
+        const greenBox = document.querySelector('.green-box');
+        if (greenBox) {
+          greenBox.addEventListener('mouseenter', () => {
+            isPaused = true;
+          });
+          greenBox.addEventListener('mouseleave', () => {
+            isPaused = false;
+          });
+        }
+      }
+
+      // Dynamic Decks Loader & Review Modal Manager
+      const grid = document.getElementById('saved-sets-grid');
+      const modal = document.getElementById('review-modal');
+      const modalTitle = document.getElementById('modal-deck-title');
+      const flipCard = document.getElementById('modal-flip-card');
+      const frontText = document.getElementById('modal-card-front-text');
+      const backText = document.getElementById('modal-card-back-text');
+      const progressText = document.getElementById('modal-progress');
+      const deleteBtn = document.getElementById('modal-delete-btn');
+
+      let currentDeck = null;
+      let currentCardIndex = 0;
+
+      // Apply 3D Parallax Tilt Effect to an element
+      function applyParallaxTilt(card) {
+        card.addEventListener('mousemove', (e) => {
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          const centerX = rect.width / 2;
+          const centerY = rect.height / 2;
+          const rotateX = -((y - centerY) / centerY) * 12;
+          const rotateY = ((x - centerX) / centerX) * 12;
+          card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+        });
+        card.addEventListener('mouseleave', () => {
+          card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+        });
+      }
+
+      window.enterFolderView = function (folderId) {
+        currentFolderId = folderId;
+        const searchBar = document.querySelector('.search-bar');
+        if (searchBar) searchBar.value = ''; // Clear search when entering folder
+        loadSavedDecks();
+      };
+
+      window.exitFolderView = function () {
+        currentFolderId = null;
+        loadSavedDecks();
+      };
+
+      window.renameFolderPrompt = function (folderId) {
+        let folders = [];
+        const stored = localStorage.getItem('popcard_folders');
+        if (stored) {
+          try { folders = JSON.parse(stored); } catch (e) {}
+        }
+        const folder = folders.find(f => f.id === folderId);
+        if (!folder) return;
+
+        showCustomPrompt(`Rename folder "${folder.name}":`, folder.name, (newName) => {
+          folder.name = newName;
+          localStorage.setItem('popcard_folders', JSON.stringify(folders));
+          loadSavedDecks();
+        });
+      };
+
+      // Load and render all saved decks
+      window.loadSavedDecks = function (filterText = '') {
+        grid.innerHTML = '';
+
+        // Load folders
+        let storedF = localStorage.getItem('popcard_folders');
+        let folders = [];
+        if (storedF) {
+          try { folders = JSON.parse(storedF); } catch (e) {}
+        }
+
+        // Load decks
+        let storedD = localStorage.getItem('popcard_decks');
+
+        // Seed beautiful default decks on first visit to start with premium content
+        if (storedD === null) {
+          const defaultDecks = [
+            {
+              id: 1001,
+              name: "Biology: Cell Organelles",
+              cards: [
+                { front: "Mitochondria", back: "Powerhouse of the cell, generates energy (ATP) through cellular respiration." },
+                { front: "Nucleus", back: "The control center of the cell containing DNA and genetic instructions." },
+                { front: "Ribosome", back: "Small organelles responsible for protein synthesis." }
+              ],
+              folderId: null
+            },
+            {
+              id: 1002,
+              name: "Physics: Waves",
+              cards: [
+                { front: "Frequency", back: "The number of wave cycles passing a given point per second, measured in Hertz (Hz)." },
+                { front: "Wavelength", back: "The physical distance between two consecutive peaks or troughs of a wave." },
+                { front: "Amplitude", back: "The maximum displacement of a wave from its equilibrium position." }
+              ],
+              folderId: null
+            }
+          ];
+          localStorage.setItem('popcard_decks', JSON.stringify(defaultDecks));
+          storedD = JSON.stringify(defaultDecks);
+        }
+
+        let decks = [];
+        try {
+          decks = JSON.parse(storedD);
+        } catch (e) {
+          decks = [];
+        }
+
+        // Set up Header and Breadcrumbs depending on folder state
+        const titleEl = document.getElementById('prev-cards-title');
+        const actionsEl = document.getElementById('prev-cards-actions');
+        const breadcrumbEl = document.getElementById('folder-breadcrumb');
+
+        if (currentFolderId) {
+          const activeFolder = folders.find(f => f.id === currentFolderId);
+          if (activeFolder) {
+            titleEl.textContent = activeFolder.name;
+            breadcrumbEl.style.display = 'flex';
+            document.getElementById('breadcrumb-folder-name').textContent = activeFolder.name;
+
+            actionsEl.innerHTML = `
+              <button class="folder-action-btn" onclick="renameFolderPrompt(${currentFolderId})">
+                Rename Folder
+              </button>
+              <button class="folder-action-btn" style="color: #ff758f; border-color: rgba(255,117,143,0.35);" onclick="deleteFolder(${currentFolderId})">
+                Delete Folder
+              </button>
+            `;
+          } else {
+            // Safe fallback if folder not found
+            currentFolderId = null;
+          }
+        }
+
+        if (!currentFolderId) {
+          titleEl.textContent = "Your Saved Sets";
+          breadcrumbEl.style.display = 'none';
+          actionsEl.innerHTML = `
+            <button id="create-folder-btn" class="folder-action-btn" onclick="createFolderPrompt()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                <line x1="12" y1="11" x2="12" y2="17"></line>
+                <line x1="9" y1="14" x2="15" y2="14"></line>
+              </svg>
+              + New Folder
+            </button>
+          `;
+        }
+
+        // 1. Render folders (only on root level, and matching filterText if searching)
+        if (!currentFolderId) {
+          const filteredFolders = folders.filter(f => 
+            f.name.toLowerCase().includes(filterText.toLowerCase())
+          );
+
+          filteredFolders.forEach(folder => {
+            const folderDecks = decks.filter(d => d.folderId === folder.id);
+            const deckCount = folderDecks.length;
+
+            const folderCard = document.createElement('div');
+            folderCard.className = 'card-set folder-set parallax-card';
+            folderCard.innerHTML = `
+              <div class="folder-icon-wrapper">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                </svg>
+              </div>
+              <div class="card-title" style="margin-top: 5px; font-weight: 700;">${folder.name}</div>
+              <div class="card-count" style="color: var(--theme-primary); font-weight: 600;">${deckCount} ${deckCount === 1 ? 'Stack' : 'Stacks'}</div>
+              
+              <div class="deck-card-actions">
+                <button type="button" class="deck-action-btn" title="Delete Folder" onclick="deleteFolder(${folder.id}, event)">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                  </svg>
+                </button>
+              </div>
+            `;
+
+            folderCard.addEventListener('click', (e) => {
+              if (e.target.closest('.deck-card-actions')) return;
+              enterFolderView(folder.id);
+            });
+
+            grid.appendChild(folderCard);
+            applyParallaxTilt(folderCard);
+          });
+        }
+
+        // 2. Render decks matching current active folder level
+        const levelDecks = decks.filter(deck => {
+          if (currentFolderId) {
+            return deck.folderId === currentFolderId;
+          } else {
+            // At root, show only ungrouped decks (or show all decks matching search if search is active)
+            if (filterText) {
+              return true; // Match anything if search is active
+            }
+            return !deck.folderId;
+          }
+        });
+
+        const filteredDecks = levelDecks.filter(deck =>
+          deck.name.toLowerCase().includes(filterText.toLowerCase())
+        );
+
+        if (filteredDecks.length === 0 && (!folders.length || currentFolderId)) {
+          const msg = currentFolderId ? "This folder is currently empty. Click '+ Create now!' above to add stacks to this folder!" : "No saved card stacks match your search.";
+          const emptyPlaceholder = document.createElement('div');
+          emptyPlaceholder.style.cssText = "grid-column: 1/-1; text-align: center; padding: 40px; color: #a273ab; font-family: 'Quicksand', sans-serif; font-weight: 600; font-size: 16px; background: rgba(255, 255, 255, 0.4); border-radius: 20px; border: 1px dashed rgba(142, 68, 173, 0.15);";
+          emptyPlaceholder.textContent = msg;
+          grid.appendChild(emptyPlaceholder);
+          return;
+        }
+
+        filteredDecks.forEach(deck => {
+          const cardSet = document.createElement('div');
+          cardSet.className = 'card-set parallax-card';
+          cardSet.innerHTML = `
+              <div class="card-title">${deck.name}</div>
+              <div class="card-count">${deck.cards.length} Cards</div>
+              
+              <div class="deck-card-actions">
+                <button type="button" class="deck-action-btn move-btn" title="Move Stack to Folder" onclick="openFolderPicker(${deck.id}, event)">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                    <polyline points="12 11 12 17 9 14 15 14"></polyline>
+                  </svg>
+                </button>
+              </div>
+            `;
+
+          cardSet.addEventListener('click', (e) => {
+            if (e.target.closest('.deck-card-actions')) return;
+            openReviewModal(deck);
+          });
+
+          grid.appendChild(cardSet);
+          applyParallaxTilt(cardSet);
+        });
+      };
+
+      // MCQ accuracy tracking state
+      let mcqAnswers = {}; // { cardIndex: true/false }
+
+      // Open Review Modal for a specific deck
+      function openReviewModal(deck) {
+        currentDeck = deck;
+        currentCardIndex = 0;
+        mcqAnswers = {}; // Reset accuracy tracking for new session
+
+        modalTitle.textContent = deck.name;
+        showModalCard();
+
+        // Reset card flip position
+        flipCard.classList.remove('flipped');
+
+        // Set up delete event handler
+        deleteBtn.onclick = () => deleteDeck(deck.id);
+
+        modal.classList.add('active');
+      }
+
+      // Completion messages for standard decks
+      const STASH_COMPLETE_MESSAGES = [
+        { emoji: '🎉', line1: 'Stash complete!', line2: "How'd you do?" },
+        { emoji: '🔄', line1: 'Stash complete!', line2: 'Wanna go again?' }
+      ];
+      let stashCompleteMessage = null; // picked fresh each completion
+
+      // Render the current card in the modal viewer
+      function showModalCard() {
+        if (!currentDeck || currentDeck.cards.length === 0) return;
+
+        const mcqChoicesContainer = document.getElementById('modal-mcq-choices');
+        const cardArea = document.querySelector('.modal-card-area');
+
+        // ── Completion card (standard decks only) ──────────────────────────
+        if (currentCardIndex === currentDeck.cards.length && (!currentDeck.type || currentDeck.type === 'standard')) {
+          flipCard.classList.remove('flipped');
+          if (cardArea) cardArea.style.cursor = 'default';
+          if (mcqChoicesContainer) mcqChoicesContainer.style.display = 'none';
+          progressText.textContent = `Done! ✓`;
+
+          // Apply completion card styling
+          const frontSide = flipCard.querySelector('.modal-card-front');
+          const backSide  = flipCard.querySelector('.modal-card-back');
+          if (frontSide) frontSide.classList.add('stash-complete-card');
+          if (backSide)  backSide.classList.add('stash-complete-card');
+
+          frontText.innerHTML = `
+            <span class="stash-emoji">${stashCompleteMessage.emoji}</span>
+            <span class="stash-line1">${stashCompleteMessage.line1}</span>
+            <span class="stash-line2">${stashCompleteMessage.line2}</span>
+          `;
+          backText.textContent = '';
+          return;
+        }
+
+        // ── Normal card ───────────────────────────────────────────────────
+        // Remove completion styling if returning from completion card
+        const frontSide = flipCard.querySelector('.modal-card-front');
+        const backSide  = flipCard.querySelector('.modal-card-back');
+        if (frontSide) frontSide.classList.remove('stash-complete-card');
+        if (backSide)  backSide.classList.remove('stash-complete-card');
+        if (cardArea) cardArea.style.cursor = (!currentDeck.type || currentDeck.type === 'standard') ? 'pointer' : 'default';
+
+        const card = currentDeck.cards[currentCardIndex];
+        frontText.textContent = card.front;
+        backText.textContent = card.back;
+
+        progressText.textContent = `${currentCardIndex + 1} of ${currentDeck.cards.length}`;
+
+        if (currentDeck.type === 'mcq') {
+          mcqChoicesContainer.style.display = 'grid';
+          if (cardArea) cardArea.style.cursor = 'default';
+
+          mcqChoicesContainer.innerHTML = '';
+
+          // If already answered this card in current session, restore the state
+          const previousAnswer = mcqAnswers[currentCardIndex];
+
+          const options = card.options || ['', '', '', ''];
+          const correctIdx = card.correctIdx !== undefined ? card.correctIdx : 0;
+          let hasAnswered = previousAnswer !== undefined;
+
+          options.forEach((opt, idx) => {
+            const btn = document.createElement('button');
+            btn.className = 'mcq-choice-btn';
+            
+            const labelLetter = String.fromCharCode(65 + idx); // A, B, C, D
+            btn.textContent = `${labelLetter}. ${opt}`;
+
+            // Restore previously answered state
+            if (hasAnswered) {
+              btn.classList.add('answered');
+              if (idx === correctIdx) {
+                btn.classList.add('correct');
+              } else if (previousAnswer.chosenIdx === idx) {
+                btn.classList.add('incorrect');
+              }
+            }
+
+            btn.onclick = () => {
+              if (hasAnswered) return;
+              hasAnswered = true;
+
+              const isCorrect = idx === correctIdx;
+              // Record answer for accuracy tracking
+              mcqAnswers[currentCardIndex] = { correct: isCorrect, chosenIdx: idx };
+
+              const allBtns = mcqChoicesContainer.querySelectorAll('.mcq-choice-btn');
+              allBtns.forEach(b => b.classList.add('answered'));
+
+              if (isCorrect) {
+                btn.classList.add('correct');
+              } else {
+                btn.classList.add('incorrect');
+                const correctBtn = allBtns[correctIdx];
+                if (correctBtn) {
+                  correctBtn.classList.add('correct');
+                }
+              }
+
+              // Check if all cards have been answered => show results
+              const totalCards = currentDeck.cards.length;
+              const answeredCount = Object.keys(mcqAnswers).length;
+              if (answeredCount === totalCards) {
+                setTimeout(() => showMcqResults(), 900);
+              }
+            };
+
+            mcqChoicesContainer.appendChild(btn);
+          });
+        } else {
+          mcqChoicesContainer.style.display = 'none';
+          if (cardArea) cardArea.style.cursor = 'pointer';
+        }
+      }
+
+      // Show MCQ Results overlay inside the modal
+      function showMcqResults() {
+        if (!currentDeck) return;
+
+        const totalCards = currentDeck.cards.length;
+        const correctCount = Object.values(mcqAnswers).filter(a => a.correct).length;
+        const pct = Math.round((correctCount / totalCards) * 100);
+
+        let grade, gradeClass, emoji;
+        if (pct <= 50) {
+          grade = 'You can do better!';
+          gradeClass = 'grade-low';
+          emoji = '💪';
+        } else if (pct <= 70) {
+          grade = 'Good going!';
+          gradeClass = 'grade-ok';
+          emoji = '👍';
+        } else if (pct <= 90) {
+          grade = 'Amazing!';
+          gradeClass = 'grade-great';
+          emoji = '🌟';
+        } else {
+          grade = 'Nailed it!';
+          gradeClass = 'grade-perfect';
+          emoji = '🏆';
+        }
+
+        // Remove existing result overlay if any
+        const existing = document.getElementById('mcq-results-overlay');
+        if (existing) existing.remove();
+
+        const overlay = document.createElement('div');
+        overlay.id = 'mcq-results-overlay';
+        overlay.className = 'mcq-results-overlay';
+        overlay.innerHTML = `
+          <div class="mcq-results-box">
+            <div class="mcq-results-emoji">${emoji}</div>
+            <h3 class="mcq-results-title">Quiz Complete!</h3>
+            <div class="mcq-results-pct ${gradeClass}">${pct}%</div>
+            <div class="mcq-results-score">${correctCount} / ${totalCards} correct</div>
+            <div class="mcq-results-message ${gradeClass}">${grade}</div>
+            <div class="mcq-results-actions">
+              <button class="mcq-results-btn mcq-retry-btn" id="mcq-retry-btn">Try Again</button>
+              <button class="mcq-results-btn mcq-close-btn" id="mcq-close-result-btn">Close</button>
+            </div>
+          </div>
+        `;
+
+        // Append inside modal content so it respects modal boundaries
+        const modalContent = document.querySelector('.review-modal-content');
+        if (modalContent) modalContent.appendChild(overlay);
+
+        setTimeout(() => overlay.classList.add('active'), 10);
+
+        overlay.querySelector('#mcq-retry-btn').onclick = () => {
+          overlay.remove();
+          // Restart the deck
+          mcqAnswers = {};
+          currentCardIndex = 0;
+          showModalCard();
+        };
+
+        overlay.querySelector('#mcq-close-result-btn').onclick = () => {
+          overlay.remove();
+          closeModal();
+        };
+      }
+
+      // Global function to close the modal
+      window.closeModal = function () {
+        const resultsOverlay = document.getElementById('mcq-results-overlay');
+        if (resultsOverlay) resultsOverlay.remove();
+        modal.classList.remove('active');
+        currentDeck = null;
+        mcqAnswers = {};
+      };
+
+      // Global function to flip the modal card
+      window.flipModalCard = function () {
+        if (!currentDeck) return;
+        if (currentDeck.type === 'mcq') return; // Do not flip MCQ cards
+        if (currentCardIndex === currentDeck.cards.length) return; // Do not flip completion card
+        flipCard.classList.toggle('flipped');
+      };
+
+      // Global function to navigate card modal
+      window.navigateModalCard = function (direction) {
+        if (!currentDeck) return;
+
+        const isStandard = !currentDeck.type || currentDeck.type === 'standard';
+        const completionSlot = currentDeck.cards.length; // virtual index after last card
+
+        function advance(dir) {
+          const prev = currentCardIndex;
+          currentCardIndex += dir;
+
+          if (isStandard) {
+            if (currentCardIndex < 0) {
+              // Back from card 0 → wrap to last real card
+              currentCardIndex = completionSlot - 1;
+            } else if (currentCardIndex === completionSlot && dir > 0) {
+              // Arrived at completion card → pick a fresh random message
+              stashCompleteMessage = STASH_COMPLETE_MESSAGES[Math.floor(Math.random() * STASH_COMPLETE_MESSAGES.length)];
+            } else if (currentCardIndex > completionSlot) {
+              // Next from completion card → back to first card
+              currentCardIndex = 0;
+            }
+          } else {
+            // MCQ: simple wrap
+            if (currentCardIndex < 0) {
+              currentCardIndex = completionSlot - 1;
+            } else if (currentCardIndex >= completionSlot) {
+              currentCardIndex = 0;
+            }
+          }
+        }
+
+        // Reset flip to front side before changing card
+        if (flipCard.classList.contains('flipped')) {
+          flipCard.classList.remove('flipped');
+          setTimeout(() => {
+            advance(direction);
+            showModalCard();
+          }, 250);
+        } else {
+          advance(direction);
+          showModalCard();
+        }
+      };
+
+      // Delete a deck from localStorage
+      function deleteDeck(deckId) {
+        showCustomConfirm(
+          "Are you sure you want to delete this card stack? This action cannot be undone.",
+          () => {
+            let savedDecks = [];
+            const stored = localStorage.getItem('popcard_decks');
+            if (stored) {
+              try {
+                savedDecks = JSON.parse(stored);
+              } catch (e) {
+                savedDecks = [];
+              }
+            }
+
+            savedDecks = savedDecks.filter(d => d.id !== deckId);
+            localStorage.setItem('popcard_decks', JSON.stringify(savedDecks));
+
+            closeModal();
+            const currentFilter = searchBar ? searchBar.value : '';
+            loadSavedDecks(currentFilter);
+          }
+        );
+      }
+
+      // Initialize Decks List & Search Input Listener
+      const searchBar = document.querySelector('.search-bar');
+      if (searchBar) {
+        searchBar.addEventListener('input', (e) => {
+          loadSavedDecks(e.target.value);
+          if (e.target.value.trim() !== '') {
+            const prevCardsSection = document.querySelector('.prevCards');
+            if (prevCardsSection) {
+              prevCardsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+          }
+        });
+      }
+
+      // ==========================================
+      // SPA CARD CREATOR CONTROLLER FUNCTION LAYER
+      // ==========================================
+
+      const container = document.getElementById('cards-container');
+      const countDisplay = document.getElementById('count-display');
+
+      function updateCardCountDisplay() {
+        const rows = container.querySelectorAll('.card-editor-row');
+        countDisplay.textContent = rows.length;
+
+        // Update numbers in headers
+        rows.forEach((row, i) => {
+          row.querySelector('.card-number').textContent = `Card #${i + 1}`;
+          row.setAttribute('data-index', i + 1);
+        });
+      }
+
+      function getCardRowHtml(index, type, front = '', back = '', options = ['', '', '', ''], correctIdx = 0) {
+        if (type === 'standard') {
+          return `
+            <div class="card-row-header">
+              <span class="card-number">Card #${index}</span>
+              <button type="button" class="delete-row-btn" onclick="deleteCardRow(this)">Delete Card</button>
+            </div>
+            <div class="card-inputs-grid">
+              <div class="card-side-editor">
+                <label>Front: Cue or Question</label>
+                <div class="input-speech-wrapper">
+                  <textarea class="card-textarea front-input" placeholder="Enter term, question, or fact..." required>${front}</textarea>
+                  <button type="button" class="speech-btn" onclick="toggleVoiceTyping(this)" title="Voice Typing">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                      <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                      <line x1="12" y1="19" x2="12" y2="23"></line>
+                      <line x1="8" y1="23" x2="16" y2="23"></line>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div class="card-side-editor">
+                <label>Back: Answer</label>
+                <div class="input-speech-wrapper">
+                  <textarea class="card-textarea back-input" placeholder="Enter definition, answer, or clue..." required>${back}</textarea>
+                  <button type="button" class="speech-btn" onclick="toggleVoiceTyping(this)" title="Voice Typing">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                      <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                      <line x1="12" y1="19" x2="12" y2="23"></line>
+                      <line x1="8" y1="23" x2="16" y2="23"></line>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          `;
+        } else {
+          return `
+            <div class="card-row-header">
+              <span class="card-number">Card #${index}</span>
+              <button type="button" class="delete-row-btn" onclick="deleteCardRow(this)">Delete Card</button>
+            </div>
+            <div class="mcq-layout">
+              <div class="card-side-editor">
+                <label>Front: Question</label>
+                <div class="input-speech-wrapper">
+                  <textarea class="card-textarea front-input" placeholder="Enter multiple-choice question..." required>${front}</textarea>
+                  <button type="button" class="speech-btn" onclick="toggleVoiceTyping(this)" title="Voice Typing">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                      <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                      <line x1="12" y1="19" x2="12" y2="23"></line>
+                      <line x1="8" y1="23" x2="16" y2="23"></line>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div class="mcq-options-container">
+                <label>Answer Options (Check the correct one)</label>
+                <div class="mcq-option-row">
+                  <input type="radio" name="correct-ans-${index}" class="mcq-radio" ${correctIdx === 0 ? 'checked' : ''} value="0" required>
+                  <input type="text" class="text-input mcq-option-input option-a" placeholder="Option A..." value="${options[0] || ''}" required autocomplete="off">
+                </div>
+                <div class="mcq-option-row">
+                  <input type="radio" name="correct-ans-${index}" class="mcq-radio" ${correctIdx === 1 ? 'checked' : ''} value="1" required>
+                  <input type="text" class="text-input mcq-option-input option-b" placeholder="Option B..." value="${options[1] || ''}" required autocomplete="off">
+                </div>
+                <div class="mcq-option-row">
+                  <input type="radio" name="correct-ans-${index}" class="mcq-radio" ${correctIdx === 2 ? 'checked' : ''} value="2" required>
+                  <input type="text" class="text-input mcq-option-input option-c" placeholder="Option C..." value="${options[2] || ''}" required autocomplete="off">
+                </div>
+                <div class="mcq-option-row">
+                  <input type="radio" name="correct-ans-${index}" class="mcq-radio" ${correctIdx === 3 ? 'checked' : ''} value="3" required>
+                  <input type="text" class="text-input mcq-option-input option-d" placeholder="Option D..." value="${options[3] || ''}" required autocomplete="off">
+                </div>
+              </div>
+            </div>
+          `;
+        }
+      }
+
+      function readCurrentCardsState() {
+        const rows = container.querySelectorAll('.card-editor-row');
+        const cards = [];
+        rows.forEach((row, idx) => {
+          const index = idx + 1;
+          const frontVal = row.querySelector('.front-input') ? row.querySelector('.front-input').value : '';
+          
+          const isMcqRow = row.querySelector('.mcq-layout') !== null;
+          if (isMcqRow) {
+            const optA = row.querySelector('.option-a') ? row.querySelector('.option-a').value : '';
+            const optB = row.querySelector('.option-b') ? row.querySelector('.option-b').value : '';
+            const optC = row.querySelector('.option-c') ? row.querySelector('.option-c').value : '';
+            const optD = row.querySelector('.option-d') ? row.querySelector('.option-d').value : '';
+            
+            const radioChecked = row.querySelector(`input[name="correct-ans-${index}"]:checked`);
+            const correctIdx = radioChecked ? parseInt(radioChecked.value, 10) : 0;
+            
+            const options = [optA, optB, optC, optD];
+            const backVal = options[correctIdx] || '';
+            
+            cards.push({
+              front: frontVal,
+              back: backVal,
+              options: options,
+              correctIdx: correctIdx
+            });
+          } else {
+            const backVal = row.querySelector('.back-input') ? row.querySelector('.back-input').value : '';
+            cards.push({
+              front: frontVal,
+              back: backVal,
+              options: ['', '', '', ''],
+              correctIdx: 0
+            });
+          }
+        });
+        return cards;
+      }
+
+      window.switchStackMode = function (mode) {
+        const currentType = document.getElementById('stack-type').value;
+        if (currentType === mode) return;
+
+        // Stop voice typing before modifying rows
+        if (window.stopActiveVoiceTyping) window.stopActiveVoiceTyping();
+
+        // Read current state to preserve text
+        const currentCards = readCurrentCardsState();
+
+        document.getElementById('stack-type').value = mode;
+        if (mode === 'mcq') {
+          document.getElementById('mode-btn-mcq').classList.add('active');
+          document.getElementById('mode-btn-standard').classList.remove('active');
+        } else {
+          document.getElementById('mode-btn-standard').classList.add('active');
+          document.getElementById('mode-btn-mcq').classList.remove('active');
+        }
+
+        // Rebuild container rows
+        container.innerHTML = '';
+        currentCards.forEach((card, idx) => {
+          const index = idx + 1;
+          const cardRow = document.createElement('div');
+          cardRow.className = 'card-editor-row';
+          cardRow.setAttribute('data-index', index);
+          cardRow.innerHTML = getCardRowHtml(index, mode, card.front, card.back, card.options, card.correctIdx);
+          container.appendChild(cardRow);
+        });
+
+        updateCardCountDisplay();
+      };
+
+      window.addCardRow = function () {
+        const nextIndex = container.querySelectorAll('.card-editor-row').length + 1;
+        const mode = document.getElementById('stack-type').value;
+
+        const cardRow = document.createElement('div');
+        cardRow.className = 'card-editor-row';
+        cardRow.setAttribute('data-index', nextIndex);
+        cardRow.innerHTML = getCardRowHtml(nextIndex, mode);
+
+        container.appendChild(cardRow);
+        updateCardCountDisplay();
+
+        // Smooth scroll to the newly added row
+        cardRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      };
+
+      window.deleteCardRow = function (button) {
+        const rows = container.querySelectorAll('.card-editor-row');
+        if (rows.length <= 1) {
+          showCustomAlert("Your card stack must have at least 1 card!");
+          return;
+        }
+
+        // Stop voice typing before modifying rows
+        if (window.stopActiveVoiceTyping) window.stopActiveVoiceTyping();
+
+        const row = button.closest('.card-editor-row');
+        row.style.transform = 'scale(0.8)';
+        row.style.opacity = '0';
+
+        setTimeout(() => {
+          row.remove();
+          updateCardCountDisplay();
+        }, 200);
+      };
+
+      window.adjustCount = function (amount) {
+        const currentCount = container.querySelectorAll('.card-editor-row').length;
+        if (amount > 0) {
+          addCardRow();
+        } else if (amount < 0) {
+          const rows = container.querySelectorAll('.card-editor-row');
+          if (rows.length > 1) {
+            const lastRow = rows[rows.length - 1];
+            lastRow.style.transform = 'scale(0.8)';
+            lastRow.style.opacity = '0';
+            setTimeout(() => {
+              lastRow.remove();
+              updateCardCountDisplay();
+            }, 200);
+          } else {
+            showCustomAlert("Your card stack must have at least 1 card!");
+          }
+        }
+      };
+
+      window.saveDeck = function (event) {
+        event.preventDefault();
+
+        const stackName = document.getElementById('stack-name').value.trim();
+        const rows = container.querySelectorAll('.card-editor-row');
+        const mode = document.getElementById('stack-type').value;
+
+        if (!stackName) {
+          showCustomAlert("Please enter a stack name.");
+          return;
+        }
+
+        const cards = [];
+        let isValid = true;
+
+        rows.forEach((row, idx) => {
+          const index = idx + 1;
+          const front = row.querySelector('.front-input').value.trim();
+
+          if (mode === 'standard') {
+            const back = row.querySelector('.back-input').value.trim();
+            if (!front || !back) {
+              isValid = false;
+            }
+            cards.push({ front, back });
+          } else {
+            const optA = row.querySelector('.option-a').value.trim();
+            const optB = row.querySelector('.option-b').value.trim();
+            const optC = row.querySelector('.option-c').value.trim();
+            const optD = row.querySelector('.option-d').value.trim();
+
+            const radioChecked = row.querySelector(`input[name="correct-ans-${index}"]:checked`);
+            const correctIdx = radioChecked ? parseInt(radioChecked.value, 10) : -1;
+
+            if (!front || !optA || !optB || !optC || !optD || correctIdx === -1) {
+              isValid = false;
+            }
+
+            const options = [optA, optB, optC, optD];
+            const back = options[correctIdx] || '';
+
+            cards.push({
+              front: front,
+              back: back,
+              options: options,
+              correctIdx: correctIdx
+            });
+          }
+        });
+
+        if (!isValid) {
+          if (mode === 'standard') {
+            showCustomAlert("Please fill in both the Front and Back for all cards.");
+          } else {
+            showCustomAlert("Please fill in the Question and all 4 Options, and check the correct option for all cards.");
+          }
+          return;
+        }
+
+        const folderSelect = document.getElementById('deck-folder-select');
+        let folderId = null;
+        if (folderSelect && folderSelect.value) {
+          folderId = parseInt(folderSelect.value, 10);
+        }
+
+        const newDeck = {
+          id: Date.now(),
+          name: stackName,
+          type: mode,
+          cards: cards,
+          folderId: folderId
+        };
+
+        // Load current decks
+        let savedDecks = [];
+        const stored = localStorage.getItem('popcard_decks');
+        if (stored) {
+          try {
+            savedDecks = JSON.parse(stored);
+          } catch (e) {
+            savedDecks = [];
+          }
+        } else {
+          // If local storage is empty, initialize default decks first so they are saved
+          const defaultDecks = [
+            {
+              id: 1001,
+              name: "Biology: Cell Organelles",
+              cards: [
+                { front: "Mitochondria", back: "Powerhouse of the cell, generates energy (ATP) through cellular respiration." },
+                { front: "Nucleus", back: "The control center of the cell containing DNA and genetic instructions." },
+                { front: "Ribosome", back: "Small organelles responsible for protein synthesis." }
+              ],
+              folderId: null
+            },
+            {
+              id: 1002,
+              name: "Physics: Waves",
+              cards: [
+                { front: "Frequency", back: "The number of wave cycles passing a given point per second, measured in Hertz (Hz)." },
+                { front: "Wavelength", back: "The physical distance between two consecutive peaks or troughs of a wave." },
+                { front: "Amplitude", back: "The maximum displacement of a wave from its equilibrium position." }
+              ],
+              folderId: null
+            }
+          ];
+          savedDecks = defaultDecks;
+        }
+
+        // Add the new deck
+        savedDecks.push(newDeck);
+
+        // Save back to localStorage
+        localStorage.setItem('popcard_decks', JSON.stringify(savedDecks));
+
+        showCustomAlert(`Success! Card stack "${stackName}" has been saved.`, () => {
+          // Switch back to home view dynamically
+          showView('home');
+        });
+      };
+
+      function resetCreatorForm() {
+        // Stop active dictation first
+        if (window.stopActiveVoiceTyping) window.stopActiveVoiceTyping();
+
+        const form = document.getElementById('deck-form');
+        if (form) form.reset();
+
+        const stackTypeInput = document.getElementById('stack-type');
+        if (stackTypeInput) {
+          stackTypeInput.value = 'standard';
+        }
+
+        const standardBtn = document.getElementById('mode-btn-standard');
+        const mcqBtn = document.getElementById('mode-btn-mcq');
+        if (standardBtn) standardBtn.classList.add('active');
+        if (mcqBtn) mcqBtn.classList.remove('active');
+
+        selectCustomOption('', 'No Folder (Ungrouped)');
+
+        // Restore to exactly 3 rows
+        container.innerHTML = '';
+        for (let i = 1; i <= 3; i++) {
+          const cardRow = document.createElement('div');
+          cardRow.className = 'card-editor-row';
+          cardRow.setAttribute('data-index', i);
+          cardRow.innerHTML = getCardRowHtml(i, 'standard');
+          container.appendChild(cardRow);
+        }
+        if (countDisplay) countDisplay.textContent = '3';
+      }
+
+      // Voice Typing (Dictation) Controller Logic
+      let activeRecognition = null;
+      let activeSpeechBtn = null;
+
+      window.toggleVoiceTyping = function (btn) {
+        if (btn.classList.contains('listening')) {
+          window.stopActiveVoiceTyping();
+          return;
+        }
+
+        // If another session is active, stop it first
+        window.stopActiveVoiceTyping();
+
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+          showCustomAlert("Sorry, your browser does not support voice typing (Web Speech API). Please try Google Chrome or Apple Safari.");
+          return;
+        }
+
+        // Find the sibling textarea inside the .input-speech-wrapper container
+        const wrapper = btn.closest('.input-speech-wrapper');
+        if (!wrapper) return;
+        const textarea = wrapper.querySelector('.card-textarea');
+        if (!textarea) return;
+
+        try {
+          const recognition = new SpeechRecognition();
+          recognition.continuous = true;
+          recognition.interimResults = false;
+          // Set to default user browser's system language
+          recognition.lang = '';
+
+          recognition.onstart = function () {
+            btn.classList.add('listening');
+            btn.setAttribute('title', 'Listening... Click to Stop');
+            activeRecognition = recognition;
+            activeSpeechBtn = btn;
+          };
+
+          recognition.onresult = function (event) {
+            const results = event.results;
+            // Get the last dictated phrase
+            const lastResult = results[results.length - 1];
+            if (lastResult && lastResult.isFinal) {
+              const transcript = lastResult[0].transcript.trim();
+              if (transcript) {
+                let currentVal = textarea.value;
+                // Add a space between phrases if it doesn't already end with space or punctuation
+                if (currentVal && !currentVal.endsWith(' ') && !currentVal.endsWith('\n')) {
+                  textarea.value = currentVal + ' ' + transcript;
+                } else {
+                  textarea.value = currentVal + transcript;
+                }
+                // Trigger input event to update states/validation
+                textarea.dispatchEvent(new Event('input', { bubbles: true }));
+              }
+            }
+          };
+
+          recognition.onerror = function (event) {
+            console.error('Speech recognition error:', event.error);
+            if (event.error === 'not-allowed') {
+              showCustomAlert("Microphone permission was denied. Please allow microphone access in your browser settings to use voice typing.");
+            } else if (event.error !== 'aborted') {
+              showCustomAlert("Speech recognition error occurred: " + event.error);
+            }
+            window.stopActiveVoiceTyping();
+          };
+
+          recognition.onend = function () {
+            btn.classList.remove('listening');
+            btn.setAttribute('title', 'Voice Typing');
+            if (activeRecognition === recognition) {
+              activeRecognition = null;
+              activeSpeechBtn = null;
+            }
+          };
+
+          recognition.start();
+        } catch (e) {
+          console.error('Failed to initialize Speech Recognition:', e);
+          showCustomAlert("Failed to start voice typing.");
+        }
+      };
+
+      window.stopActiveVoiceTyping = function () {
+        if (activeRecognition) {
+          try {
+            activeRecognition.stop();
+          } catch (e) {
+            console.error('Error stopping speech recognition:', e);
+          }
+          activeRecognition = null;
+        }
+        if (activeSpeechBtn) {
+          activeSpeechBtn.classList.remove('listening');
+          activeSpeechBtn.setAttribute('title', 'Voice Typing');
+          activeSpeechBtn = null;
+        }
+      };
+
+
+      // Initialize Decks Grid Rendering
+      loadSavedDecks();
+    });
+  </script>
+
+  <!-- Review Modal Overlay -->
+  <div id="review-modal" class="review-modal-overlay">
+    <div class="review-modal-content">
+      <div class="modal-header">
+        <h3 id="modal-deck-title">Deck Title</h3>
+        <button class="modal-close-btn" onclick="closeModal()">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div class="modal-card-area" onclick="flipModalCard()">
+        <div id="modal-flip-card" class="modal-flip-card">
+          <div class="modal-card-side modal-card-front">
+            <span class="card-side-label">Q</span>
+            <div id="modal-card-front-text" class="modal-card-text">Card front text goes here</div>
+          </div>
+          <div class="modal-card-side modal-card-back">
+            <span class="card-side-label">A</span>
+            <div id="modal-card-back-text" class="modal-card-text">Card back text goes here</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MCQ Choice Grid -->
+      <div id="modal-mcq-choices" class="modal-mcq-choices-grid" style="display: none;"></div>
+
+      <div class="modal-controls">
+        <button class="modal-nav-btn" onclick="navigateModalCard(-1)">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+        </button>
+        <span id="modal-progress" class="modal-progress-text">1 of 5</span>
+        <button class="modal-nav-btn" onclick="navigateModalCard(1)">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </button>
+      </div>
+
+      <button id="modal-delete-btn" class="delete-deck-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="3 6 5 6 21 6"></polyline>
+          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          <line x1="10" y1="11" x2="10" y2="17"></line>
+          <line x1="14" y1="11" x2="14" y2="17"></line>
+        </svg>
+        Delete this Stack
+      </button>
+    </div>
+  </div>
+
+  <!-- Folder Picker Popover Modal Overlay -->
+  <div id="folder-picker" class="folder-picker-overlay">
+    <div class="folder-picker-box">
+      <h3 class="folder-picker-title">Move Card Stack</h3>
+      <div id="folder-picker-options" class="folder-options-list"></div>
+      <div class="folder-picker-actions">
+        <button class="custom-popup-btn custom-popup-btn-secondary" onclick="closeFolderPicker()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</body>
+
+
+</html>
