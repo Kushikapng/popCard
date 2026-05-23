@@ -944,8 +944,13 @@
             });
 
             showCustomAlert("All application data successfully cleared!", () => {
-              // Reload page to reinitialize clean defaults
-              window.location.reload();
+              // Soft reset the app state without doing a hard page reload
+              showView('home');
+              const searchBar = document.querySelector('.search-bar');
+              if (searchBar) searchBar.value = '';
+              loadSavedDecks('');
+              if (window.renderWeeklyStats) window.renderWeeklyStats();
+              window.scrollTo({ top: 0, behavior: 'smooth' });
             });
           }, 300);
         };
@@ -1643,32 +1648,10 @@
         // Load decks
         let storedD = localStorage.getItem('popcard_decks');
 
-        // Seed beautiful default decks on first visit to start with premium content
+        // Initialize as empty on first visit
         if (storedD === null) {
-          const defaultDecks = [
-            {
-              id: 1001,
-              name: "Biology: Cell Organelles",
-              cards: [
-                { front: "Mitochondria", back: "Powerhouse of the cell, generates energy (ATP) through cellular respiration." },
-                { front: "Nucleus", back: "The control center of the cell containing DNA and genetic instructions." },
-                { front: "Ribosome", back: "Small organelles responsible for protein synthesis." }
-              ],
-              folderId: null
-            },
-            {
-              id: 1002,
-              name: "Physics: Waves",
-              cards: [
-                { front: "Frequency", back: "The number of wave cycles passing a given point per second, measured in Hertz (Hz)." },
-                { front: "Wavelength", back: "The physical distance between two consecutive peaks or troughs of a wave." },
-                { front: "Amplitude", back: "The maximum displacement of a wave from its equilibrium position." }
-              ],
-              folderId: null
-            }
-          ];
-          localStorage.setItem('popcard_decks', JSON.stringify(defaultDecks));
-          storedD = JSON.stringify(defaultDecks);
+          localStorage.setItem('popcard_decks', '[]');
+          storedD = '[]';
         }
 
         let decks = [];
@@ -2468,31 +2451,6 @@
           } catch (e) {
             savedDecks = [];
           }
-        } else {
-          // If local storage is empty, initialize default decks first so they are saved
-          const defaultDecks = [
-            {
-              id: 1001,
-              name: "Biology: Cell Organelles",
-              cards: [
-                { front: "Mitochondria", back: "Powerhouse of the cell, generates energy (ATP) through cellular respiration." },
-                { front: "Nucleus", back: "The control center of the cell containing DNA and genetic instructions." },
-                { front: "Ribosome", back: "Small organelles responsible for protein synthesis." }
-              ],
-              folderId: null
-            },
-            {
-              id: 1002,
-              name: "Physics: Waves",
-              cards: [
-                { front: "Frequency", back: "The number of wave cycles passing a given point per second, measured in Hertz (Hz)." },
-                { front: "Wavelength", back: "The physical distance between two consecutive peaks or troughs of a wave." },
-                { front: "Amplitude", back: "The maximum displacement of a wave from its equilibrium position." }
-              ],
-              folderId: null
-            }
-          ];
-          savedDecks = defaultDecks;
         }
 
         // Add the new deck
