@@ -935,6 +935,7 @@
             localStorage.removeItem('popcard_theme');
             localStorage.removeItem('popcard_stats');
             localStorage.removeItem('popcard_deck_stats');
+            localStorage.removeItem('popcard_monthly_stats');
 
             // Apply default lavender theme and reset UI
             THEMES.forEach(t => {
@@ -946,6 +947,7 @@
               showView('home');
               const searchBar = document.querySelector('.search-bar');
               if (searchBar) searchBar.value = '';
+              if (window.updateNicknameUI) window.updateNicknameUI();
               loadSavedDecks('');
               if (window.renderWeeklyStats) window.renderWeeklyStats();
               window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -2599,7 +2601,7 @@
       // Accuracy Tracking
       window.saveDailyStats = function(isCorrect, deckId = null, deckName = null) {
         if (!deckId && typeof currentDeck !== 'undefined' && currentDeck) deckId = currentDeck.id;
-        if (!deckName && typeof currentDeck !== 'undefined' && currentDeck) deckName = currentDeck.title;
+        if (!deckName && typeof currentDeck !== 'undefined' && currentDeck) deckName = currentDeck.name;
         
         let cardIndex = 0;
         if (typeof currentCardIndex !== 'undefined') cardIndex = currentCardIndex;
@@ -2610,11 +2612,14 @@
         const today = todayObj.toISOString().split('T')[0];
         const currentMonthPrefix = todayObj.toISOString().slice(0, 7);
         
-        if (!stats[today]) stats[today] = { correct: 0, total: 0, reviewed: {} };
+        if (!stats[today]) stats[today] = { correct: 0, rawCorrect: 0, total: 0, reviewed: {} };
         if (!stats[today].reviewed) stats[today].reviewed = {};
         
         // Total reviews ALWAYS increase on every attempt
         stats[today].total += 1;
+        if (isCorrect) {
+          stats[today].rawCorrect = (stats[today].rawCorrect || 0) + 1;
+        }
 
         // Mastered count only increases if it wasn't already mastered today
         if (isCorrect && !stats[today].reviewed[cardId]?.correct) {
@@ -2639,10 +2644,13 @@
 
         if (deckId && deckName) {
           const deckStats = JSON.parse(localStorage.getItem('popcard_deck_stats') || '{}');
-          if (!deckStats[deckId]) deckStats[deckId] = { correct: 0, total: 0, name: deckName, reviewed: {} };
+          if (!deckStats[deckId]) deckStats[deckId] = { correct: 0, rawCorrect: 0, total: 0, name: deckName, reviewed: {} };
           if (!deckStats[deckId].reviewed) deckStats[deckId].reviewed = {};
           
           deckStats[deckId].total += 1;
+          if (isCorrect) {
+            deckStats[deckId].rawCorrect = (deckStats[deckId].rawCorrect || 0) + 1;
+          }
           
           if (isCorrect && !deckStats[deckId].reviewed[cardId]?.correct) {
             deckStats[deckId].correct += 1;
@@ -2661,7 +2669,7 @@
       window.recordStandardAnswer = function(isCorrect) {
         if (!currentDeck) return;
         mcqAnswers[currentCardIndex] = { correct: isCorrect };
-        saveDailyStats(isCorrect, currentDeck.id, currentDeck.title);
+        saveDailyStats(isCorrect, currentDeck.id, currentDeck.name);
         if (window.navigateModalCard) window.navigateModalCard(1);
       };
 
@@ -2698,7 +2706,8 @@
         // Calculate totals across all history for accurate averages
         Object.keys(stats).forEach(date => {
           totalCards += stats[date].total;
-          totalCorrect += stats[date].correct;
+          // Use rawCorrect for accuracy if available, fallback to correct
+          totalCorrect += (stats[date].rawCorrect !== undefined ? stats[date].rawCorrect : stats[date].correct);
           totalAnswered += stats[date].total;
           
           if (date === days[6]) {
@@ -2743,13 +2752,13 @@
           return {
             id: id,
             name: ds.name,
-            accuracy: ds.total > 0 ? Math.round((ds.correct / ds.total) * 100) : 0,
+            accuracy: ds.total > 0 ? Math.round(((ds.rawCorrect !== undefined ? ds.rawCorrect : ds.correct) / ds.total) * 100) : 0,
             total: ds.total
           };
-        }).filter(d => d.total > 0);
+        }).filter(d => d.total > 0 && d.accuracy < 45);
 
         deckArray.sort((a, b) => a.accuracy - b.accuracy);
-        const lowestDecks = deckArray.slice(0, 5);
+        const lowestDecks = deckArray.slice(0, 3);
 
         if (practiceSection && practiceList) {
           practiceSection.style.display = 'block';
@@ -2775,7 +2784,7 @@
 
         days.forEach(dateStr => {
           const dayData = stats[dateStr];
-          const pct = dayData && dayData.total > 0 ? Math.round((dayData.correct / dayData.total) * 100) : 0;
+          const pct = dayData && dayData.total > 0 ? Math.round(((dayData.rawCorrect !== undefined ? dayData.rawCorrect : dayData.correct) / dayData.total) * 100) : 0;
           const hasData = dayData && dayData.total > 0;
           
           // Chart Column
