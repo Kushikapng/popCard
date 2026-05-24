@@ -354,27 +354,27 @@
   </div>
 
   <!-- Dynamic SPA Stats View -->
-  <div id="stats-view" class="view-container" style="display: none; max-width: 1000px; margin: 40px auto; padding: 0 20px;">
+  <div id="stats-view" class="view-container" style="display: none; max-width: 1000px; height: calc(100vh - 85px); padding: 3vh 20px; margin: 0 auto; flex-direction: column; justify-content: space-evenly; gap: 1.5vh; overflow: hidden; box-sizing: border-box;">
     
     <div class="stats-top-row">
       <div class="stat-summary-card">
         <div class="stat-icon-wrapper"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--theme-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg></div>
-        <div class="stat-value" id="stat-cards-reviewed">1,284</div>
+        <div class="stat-value" id="stat-cards-reviewed">--</div>
         <div class="stat-label">Cards Reviewed</div>
       </div>
       <div class="stat-summary-card">
         <div class="stat-icon-wrapper"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--theme-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg></div>
-        <div class="stat-value" id="stat-avg-accuracy">94.2%</div>
+        <div class="stat-value" id="stat-avg-accuracy">--</div>
         <div class="stat-label">Avg. Accuracy</div>
       </div>
       <div class="stat-summary-card">
         <div class="stat-icon-wrapper"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--theme-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div>
-        <div class="stat-value" id="stat-time-spent">42m</div>
+        <div class="stat-value" id="stat-time-spent">--</div>
         <div class="stat-label">Time Spent Today</div>
       </div>
       <div class="stat-summary-card">
         <div class="stat-icon-wrapper"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--theme-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg></div>
-        <div class="stat-value" id="stat-mastered">18</div>
+        <div class="stat-value" id="stat-mastered">--</div>
         <div class="stat-label">Mastered Today</div>
       </div>
     </div>
@@ -707,10 +707,8 @@
           (name) => {
             if (name) {
               localStorage.setItem('popcard_nickname', name);
-              showCustomAlert(`Awesome! Nicely set to "${name}".`);
             } else {
               localStorage.removeItem('popcard_nickname');
-              showCustomAlert("Nickname cleared.");
             }
             updateNicknameUI();
           }
@@ -1455,7 +1453,7 @@
         } else if (viewName === 'stats') {
           homeView.style.display = 'none';
           creatorView.style.display = 'none';
-          if (statsView) statsView.style.display = 'block';
+          if (statsView) statsView.style.display = 'flex';
           if (searchContainer) searchContainer.style.display = 'none';
           if (createBtn) createBtn.style.display = 'none';
           if (backBtn) backBtn.style.display = 'inline-flex';
@@ -2716,7 +2714,7 @@
         if (practiceSection && practiceList) {
           practiceSection.style.display = 'block';
           if (lowestDecks.length === 0) {
-            practiceList.innerHTML = '<p style="text-align: center; color: #7f8c8d; font-size: 14px; margin-top: 10px;">Review some stacks to see your practice recommendations here!</p>';
+            practiceList.innerHTML = '<p style="text-align: center; color: #7f8c8d; font-size: 14px; margin: 10px 0;">Review some stacks to see your practice recommendations here!</p>';
           } else {
             practiceList.innerHTML = lowestDecks.map(deck => {
               const statusClass = deck.accuracy < 60 ? 'danger' : 'warning';
