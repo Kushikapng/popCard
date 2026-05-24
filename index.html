@@ -2693,7 +2693,7 @@
         }
         
         const monthlyStats = JSON.parse(localStorage.getItem('popcard_monthly_stats') || '{}');
-        let masteredThisMonth = monthlyStats[currentMonthPrefix] ? monthlyStats[currentMonthPrefix].correct : 0;
+        masteredThisMonth = monthlyStats[currentMonthPrefix] ? monthlyStats[currentMonthPrefix].correct : 0;
 
         // Calculate totals across all history for accurate averages
         Object.keys(stats).forEach(date => {
