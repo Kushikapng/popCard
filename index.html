@@ -360,7 +360,7 @@
       <div class="stat-summary-card">
         <div class="stat-icon-wrapper"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--theme-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg></div>
         <div class="stat-value" id="stat-cards-reviewed">--</div>
-        <div class="stat-label">Cards Reviewed</div>
+        <div class="stat-label">Total Reviews</div>
       </div>
       <div class="stat-summary-card">
         <div class="stat-icon-wrapper"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--theme-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg></div>
@@ -2598,20 +2598,53 @@
 
       // Accuracy Tracking
       window.saveDailyStats = function(isCorrect, deckId = null, deckName = null) {
+        if (!deckId && typeof currentDeck !== 'undefined' && currentDeck) deckId = currentDeck.id;
+        if (!deckName && typeof currentDeck !== 'undefined' && currentDeck) deckName = currentDeck.title;
+        
+        let cardIndex = 0;
+        if (typeof currentCardIndex !== 'undefined') cardIndex = currentCardIndex;
+        const cardId = (deckId || 'unknown') + '_' + cardIndex;
+
         const stats = JSON.parse(localStorage.getItem('popcard_stats') || '{}');
         const today = new Date().toISOString().split('T')[0];
-        if (!stats[today]) stats[today] = { correct: 0, total: 0 };
-        stats[today].total += 1;
-        if (isCorrect) stats[today].correct += 1;
-        localStorage.setItem('popcard_stats', JSON.stringify(stats));
+        
+        if (!stats[today]) stats[today] = { correct: 0, total: 0, reviewed: {} };
+        if (!stats[today].reviewed) stats[today].reviewed = {};
+        
+        // Prevent double counting for daily stats
+        if (!stats[today].reviewed[cardId]) {
+          stats[today].total += 1;
+          if (isCorrect) stats[today].correct += 1;
+          stats[today].reviewed[cardId] = { correct: isCorrect };
+          localStorage.setItem('popcard_stats', JSON.stringify(stats));
+        } else {
+          // If previously answered wrong, but now correct, update the correct count
+          if (isCorrect && !stats[today].reviewed[cardId].correct) {
+            stats[today].correct += 1;
+            stats[today].reviewed[cardId].correct = true;
+            localStorage.setItem('popcard_stats', JSON.stringify(stats));
+          }
+        }
         
         if (deckId && deckName) {
           const deckStats = JSON.parse(localStorage.getItem('popcard_deck_stats') || '{}');
-          if (!deckStats[deckId]) deckStats[deckId] = { correct: 0, total: 0, name: deckName };
-          deckStats[deckId].total += 1;
-          if (isCorrect) deckStats[deckId].correct += 1;
-          deckStats[deckId].name = deckName;
-          localStorage.setItem('popcard_deck_stats', JSON.stringify(deckStats));
+          if (!deckStats[deckId]) deckStats[deckId] = { correct: 0, total: 0, name: deckName, reviewed: {} };
+          if (!deckStats[deckId].reviewed) deckStats[deckId].reviewed = {};
+          
+          // Prevent double counting for deck mastery stats
+          if (!deckStats[deckId].reviewed[cardId]) {
+            deckStats[deckId].total += 1;
+            if (isCorrect) deckStats[deckId].correct += 1;
+            deckStats[deckId].reviewed[cardId] = { correct: isCorrect };
+            deckStats[deckId].name = deckName;
+            localStorage.setItem('popcard_deck_stats', JSON.stringify(deckStats));
+          } else {
+            if (isCorrect && !deckStats[deckId].reviewed[cardId].correct) {
+              deckStats[deckId].correct += 1;
+              deckStats[deckId].reviewed[cardId].correct = true;
+              localStorage.setItem('popcard_deck_stats', JSON.stringify(deckStats));
+            }
+          }
         }
 
         if (window.renderWeeklyStats) window.renderWeeklyStats();
