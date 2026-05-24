@@ -2606,45 +2606,53 @@
         const cardId = (deckId || 'unknown') + '_' + cardIndex;
 
         const stats = JSON.parse(localStorage.getItem('popcard_stats') || '{}');
-        const today = new Date().toISOString().split('T')[0];
+        const todayObj = new Date();
+        const today = todayObj.toISOString().split('T')[0];
+        const currentMonthPrefix = todayObj.toISOString().slice(0, 7);
         
         if (!stats[today]) stats[today] = { correct: 0, total: 0, reviewed: {} };
         if (!stats[today].reviewed) stats[today].reviewed = {};
         
-        // Prevent double counting for daily stats
-        if (!stats[today].reviewed[cardId]) {
-          stats[today].total += 1;
-          if (isCorrect) stats[today].correct += 1;
-          stats[today].reviewed[cardId] = { correct: isCorrect };
-          localStorage.setItem('popcard_stats', JSON.stringify(stats));
-        } else {
-          // If previously answered wrong, but now correct, update the correct count
-          if (isCorrect && !stats[today].reviewed[cardId].correct) {
-            stats[today].correct += 1;
-            stats[today].reviewed[cardId].correct = true;
-            localStorage.setItem('popcard_stats', JSON.stringify(stats));
-          }
+        // Total reviews ALWAYS increase on every attempt
+        stats[today].total += 1;
+
+        // Mastered count only increases if it wasn't already mastered today
+        if (isCorrect && !stats[today].reviewed[cardId]?.correct) {
+          stats[today].correct += 1;
+          stats[today].reviewed[cardId] = { correct: true };
+        } else if (!stats[today].reviewed[cardId]) {
+          // Track that it was seen, even if incorrect
+          stats[today].reviewed[cardId] = { correct: false };
         }
+        localStorage.setItem('popcard_stats', JSON.stringify(stats));
         
+        // Monthly stats for the Crunchy Milestone!
+        const monthlyStats = JSON.parse(localStorage.getItem('popcard_monthly_stats') || '{}');
+        if (!monthlyStats[currentMonthPrefix]) monthlyStats[currentMonthPrefix] = { correct: 0, reviewed: {} };
+        if (!monthlyStats[currentMonthPrefix].reviewed) monthlyStats[currentMonthPrefix].reviewed = {};
+        
+        if (isCorrect && !monthlyStats[currentMonthPrefix].reviewed[cardId]) {
+          monthlyStats[currentMonthPrefix].correct += 1;
+          monthlyStats[currentMonthPrefix].reviewed[cardId] = true;
+          localStorage.setItem('popcard_monthly_stats', JSON.stringify(monthlyStats));
+        }
+
         if (deckId && deckName) {
           const deckStats = JSON.parse(localStorage.getItem('popcard_deck_stats') || '{}');
           if (!deckStats[deckId]) deckStats[deckId] = { correct: 0, total: 0, name: deckName, reviewed: {} };
           if (!deckStats[deckId].reviewed) deckStats[deckId].reviewed = {};
           
-          // Prevent double counting for deck mastery stats
-          if (!deckStats[deckId].reviewed[cardId]) {
-            deckStats[deckId].total += 1;
-            if (isCorrect) deckStats[deckId].correct += 1;
-            deckStats[deckId].reviewed[cardId] = { correct: isCorrect };
-            deckStats[deckId].name = deckName;
-            localStorage.setItem('popcard_deck_stats', JSON.stringify(deckStats));
-          } else {
-            if (isCorrect && !deckStats[deckId].reviewed[cardId].correct) {
-              deckStats[deckId].correct += 1;
-              deckStats[deckId].reviewed[cardId].correct = true;
-              localStorage.setItem('popcard_deck_stats', JSON.stringify(deckStats));
-            }
+          deckStats[deckId].total += 1;
+          
+          if (isCorrect && !deckStats[deckId].reviewed[cardId]?.correct) {
+            deckStats[deckId].correct += 1;
+            deckStats[deckId].reviewed[cardId] = { correct: true };
+          } else if (!deckStats[deckId].reviewed[cardId]) {
+            deckStats[deckId].reviewed[cardId] = { correct: false };
           }
+          
+          deckStats[deckId].name = deckName;
+          localStorage.setItem('popcard_deck_stats', JSON.stringify(deckStats));
         }
 
         if (window.renderWeeklyStats) window.renderWeeklyStats();
@@ -2684,6 +2692,9 @@
           days.push(d.toISOString().split('T')[0]);
         }
         
+        const monthlyStats = JSON.parse(localStorage.getItem('popcard_monthly_stats') || '{}');
+        let masteredThisMonth = monthlyStats[currentMonthPrefix] ? monthlyStats[currentMonthPrefix].correct : 0;
+
         // Calculate totals across all history for accurate averages
         Object.keys(stats).forEach(date => {
           totalCards += stats[date].total;
@@ -2694,10 +2705,6 @@
             // Today
             masteredToday = stats[date].correct;
             cardsToday = stats[date].total;
-          }
-          
-          if (date.startsWith(currentMonthPrefix)) {
-            masteredThisMonth += stats[date].correct;
           }
         });
 
