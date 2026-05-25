@@ -1703,8 +1703,9 @@
         }
 
         // 1. Render folders (only on root level, and matching filterText if searching)
+        let filteredFolders = [];
         if (!currentFolderId) {
-          const filteredFolders = folders.filter(f => 
+          filteredFolders = folders.filter(f => 
             f.name.toLowerCase().includes(filterText.toLowerCase())
           );
 
@@ -1760,8 +1761,13 @@
           deck.name.toLowerCase().includes(filterText.toLowerCase())
         );
 
-        if (filteredDecks.length === 0 && (!folders.length || currentFolderId)) {
-          const msg = currentFolderId ? "This folder is currently empty. Click '+ Create now!' above to add stacks to this folder!" : "No saved card stacks match your search.";
+        if (filteredDecks.length === 0 && (currentFolderId || filteredFolders.length === 0)) {
+          let msg;
+          if (currentFolderId) {
+            msg = filterText ? "No saved card stacks match your search in this folder." : "This folder is currently empty. Click '+ Create now!' above to add stacks to this folder!";
+          } else {
+            msg = filterText ? "No saved card stacks match your search." : "You haven't created any card stacks yet. Click '+ Create now!' to get started!";
+          }
           const emptyPlaceholder = document.createElement('div');
           emptyPlaceholder.style.cssText = "grid-column: 1/-1; text-align: center; padding: 40px; color: #a273ab; font-family: 'Quicksand', sans-serif; font-weight: 600; font-size: 16px; background: rgba(255, 255, 255, 0.4); border-radius: 20px; border: 1px dashed rgba(142, 68, 173, 0.15);";
           emptyPlaceholder.textContent = msg;
