@@ -354,7 +354,7 @@
   </div>
 
   <!-- Dynamic SPA Stats View -->
-  <div id="stats-view" class="view-container" style="display: none; max-width: 1000px; height: calc(100vh - 85px); padding: 3vh 20px; margin: 0 auto; flex-direction: column; justify-content: space-evenly; gap: 1.5vh; overflow: hidden; box-sizing: border-box;">
+  <div id="stats-view" class="view-container" style="display: none; max-width: 1000px; min-height: calc(100vh - 85px); height: auto; padding: 3vh 20px 8vh 20px; margin: 0 auto; flex-direction: column; justify-content: flex-start; gap: 3vh; overflow-y: auto; box-sizing: border-box;">
     
     <div class="stats-top-row">
       <div class="stat-summary-card">
@@ -425,10 +425,26 @@
       </div>
     </div>
 
-    <div class="practice-stacks-section" id="practice-stacks-section" style="display: none;">
-      <h3 class="practice-stacks-title">Stacks that need practice</h3>
-      <div class="practice-stacks-list" id="practice-stacks-list">
-        <!-- Populated via JS -->
+    <div class="badges-section" id="badges-section">
+      <div class="badges-title-container">
+        <h3 class="badges-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color: var(--theme-primary);">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+          </svg>
+          Weekly Badges
+        </h3>
+        <span class="badges-count-badge" id="badges-unlocked-count">0 / 6 Unlocked</span>
+      </div>
+      <div class="badges-carousel-wrapper" style="position: relative; display: flex; align-items: center; width: 100%;">
+        <button class="badge-scroll-btn prev" onclick="scrollBadges(-1)" style="position: absolute; left: -15px; z-index: 10; background: rgba(255,255,255,0.9); border: 1px solid rgba(142,68,173,0.15); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.06); color: var(--theme-primary); transition: all 0.2s;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        </button>
+        <div class="badges-row" id="badges-row" style="width: 100%; overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none;">
+          <!-- Populated via JS -->
+        </div>
+        <button class="badge-scroll-btn next" onclick="scrollBadges(1)" style="position: absolute; right: -15px; z-index: 10; background: rgba(255,255,255,0.9); border: 1px solid rgba(142,68,173,0.15); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.06); color: var(--theme-primary); transition: all 0.2s;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
       </div>
     </div>
 
@@ -439,8 +455,8 @@
     <div class="creator-container">
       <div class="glass-panel">
         <div class="creator-header">
-          <h2>Create a Card Stack</h2>
-          <p>Type out the information on each card and the cue behind it to build your custom deck.</p>
+          <h2 id="creator-title">Create a Card Stack</h2>
+          <p id="creator-desc">Type out the information on each card and the cue behind it to build your custom deck.</p>
         </div>
 
         <form id="deck-form" onsubmit="saveDeck(event)">
@@ -613,7 +629,7 @@
 
           <!-- Submit Area -->
           <div class="submit-area">
-            <button type="submit" class="save-deck-btn">Save Stack</button>
+            <button type="submit" id="save-deck-btn" class="save-deck-btn">Save Stack</button>
           </div>
         </form>
       </div>
@@ -1585,9 +1601,11 @@
       const backText = document.getElementById('modal-card-back-text');
       const progressText = document.getElementById('modal-progress');
       const deleteBtn = document.getElementById('modal-delete-btn');
+      const editBtn = document.getElementById('modal-edit-btn');
 
       let currentDeck = null;
       let currentCardIndex = 0;
+      window.editingDeckId = null;
 
       // Apply 3D Parallax Tilt Effect to an element
       function applyParallaxTilt(card) {
@@ -1817,11 +1835,65 @@
         // Reset card flip position
         flipCard.classList.remove('flipped');
 
-        // Set up delete event handler
+        // Set up action handlers
         deleteBtn.onclick = () => deleteDeck(deck.id);
+        if (editBtn) {
+          editBtn.onclick = () => window.editDeck(deck);
+        }
 
         modal.classList.add('active');
       }
+
+      window.editDeck = function(deck) {
+        closeModal();
+        window.editingDeckId = deck.id;
+
+        // Change titles
+        const creatorTitle = document.getElementById('creator-title');
+        const creatorDesc = document.getElementById('creator-desc');
+        const saveBtn = document.getElementById('save-deck-btn');
+        if (creatorTitle) creatorTitle.textContent = `Edit "${deck.name}"`;
+        if (creatorDesc) creatorDesc.textContent = "Modify the questions, choices, or answers in your card stack below.";
+        if (saveBtn) saveBtn.textContent = "Update Stack";
+
+        // Prepopulate fields
+        document.getElementById('stack-name').value = deck.name;
+        
+        // Target folder custom select
+        let folders = [];
+        const storedF = localStorage.getItem('popcard_folders');
+        if (storedF) {
+          try { folders = JSON.parse(storedF); } catch(e) {}
+        }
+        const folder = folders.find(f => f.id === deck.folderId);
+        selectCustomOption(deck.folderId || '', folder ? folder.name : 'No Folder (Ungrouped)');
+
+        // Switch deck mode and rebuild container rows
+        const mode = deck.type || 'standard';
+        document.getElementById('stack-type').value = mode;
+        if (mode === 'mcq') {
+          document.getElementById('mode-btn-mcq').classList.add('active');
+          document.getElementById('mode-btn-standard').classList.remove('active');
+        } else {
+          document.getElementById('mode-btn-standard').classList.add('active');
+          document.getElementById('mode-btn-mcq').classList.remove('active');
+        }
+
+        container.innerHTML = '';
+        deck.cards.forEach((card, idx) => {
+          const index = idx + 1;
+          const cardRow = document.createElement('div');
+          cardRow.className = 'card-editor-row';
+          cardRow.setAttribute('data-index', index);
+          cardRow.innerHTML = getCardRowHtml(index, mode, card.front, card.back, card.options, card.correctIdx);
+          container.appendChild(cardRow);
+        });
+
+        updateCardCountDisplay();
+
+        // Switch to creator view
+        showView('create');
+      };
 
       // Completion messages for standard decks
       const STASH_COMPLETE_MESSAGES = [
@@ -1829,6 +1901,12 @@
         { emoji: '🔄', line1: 'Stash complete!', line2: 'Wanna go again?' }
       ];
       let stashCompleteMessage = null; // picked fresh each completion
+
+      window.restartSession = function() {
+        currentCardIndex = 0;
+        mcqAnswers = {};
+        showModalCard();
+      };
 
       // Render the current card in the modal viewer
       function showModalCard() {
@@ -1852,6 +1930,9 @@
             const correctCount = Object.values(mcqAnswers).filter(a => a.correct).length;
             const accuracy = Math.round((correctCount / answeredCount) * 100);
             scoreText = `Score: ${correctCount}/${answeredCount} (${accuracy}%)`;
+            if (answeredCount >= 5 && correctCount === answeredCount) {
+              if (window.unlockBadge) window.unlockBadge('perfectionist');
+            }
           }
 
           // Apply completion card styling
@@ -1865,7 +1946,7 @@
             <span class="stash-line1">${stashCompleteMessage.line1}</span>
             <span class="stash-line2">${scoreText}</span>
             <div style="margin-top: 25px; display: flex; gap: 12px; justify-content: center; z-index: 10;">
-              <button class="btn-primary-feature" style="padding: 10px 20px; font-size: 15px; width: auto;" onclick="currentCardIndex=0; showModalCard(); event.stopPropagation();">Go again</button>
+              <button class="btn-primary-feature" style="padding: 10px 20px; font-size: 15px; width: auto;" onclick="window.restartSession(); event.stopPropagation();">Go again</button>
               <button class="btn-secondary" style="padding: 10px 20px; font-size: 15px; width: auto;" onclick="closeModal(); event.stopPropagation();">Done</button>
             </div>
           `;
@@ -1984,6 +2065,9 @@
         const totalCards = currentDeck.cards.length;
         const correctCount = Object.values(mcqAnswers).filter(a => a.correct).length;
         const pct = Math.round((correctCount / totalCards) * 100);
+        if (totalCards >= 5 && correctCount === totalCards) {
+          if (window.unlockBadge) window.unlockBadge('perfectionist');
+        }
 
         let grade, gradeClass, emoji;
         if (pct <= 50) {
@@ -2440,14 +2524,6 @@
           folderId = parseInt(folderSelect.value, 10);
         }
 
-        const newDeck = {
-          id: Date.now(),
-          name: stackName,
-          type: mode,
-          cards: cards,
-          folderId: folderId
-        };
-
         // Load current decks
         let savedDecks = [];
         const stored = localStorage.getItem('popcard_decks');
@@ -2459,13 +2535,31 @@
           }
         }
 
-        // Add the new deck
-        savedDecks.push(newDeck);
+        const isEdit = !!window.editingDeckId;
+        if (isEdit) {
+          const deckIdx = savedDecks.findIndex(d => d.id === window.editingDeckId);
+          if (deckIdx !== -1) {
+            savedDecks[deckIdx].name = stackName;
+            savedDecks[deckIdx].type = mode;
+            savedDecks[deckIdx].cards = cards;
+            savedDecks[deckIdx].folderId = folderId;
+          }
+          window.editingDeckId = null;
+        } else {
+          const newDeck = {
+            id: Date.now(),
+            name: stackName,
+            type: mode,
+            cards: cards,
+            folderId: folderId
+          };
+          savedDecks.push(newDeck);
+        }
 
         // Save back to localStorage
         localStorage.setItem('popcard_decks', JSON.stringify(savedDecks));
 
-        showCustomAlert(`Success! Card stack "${stackName}" has been saved.`, () => {
+        showCustomAlert(isEdit ? `Success! Card stack "${stackName}" has been updated.` : `Success! Card stack "${stackName}" has been saved.`, () => {
           // Switch back to home view dynamically
           showView('home');
         });
@@ -2474,6 +2568,16 @@
       function resetCreatorForm() {
         // Stop active dictation first
         if (window.stopActiveVoiceTyping) window.stopActiveVoiceTyping();
+
+        // Clear editing state
+        window.editingDeckId = null;
+
+        const creatorTitle = document.getElementById('creator-title');
+        const creatorDesc = document.getElementById('creator-desc');
+        const saveBtn = document.getElementById('save-deck-btn');
+        if (creatorTitle) creatorTitle.textContent = "Create a Card Stack";
+        if (creatorDesc) creatorDesc.textContent = "Type out the information on each card and the cue behind it to build your custom deck.";
+        if (saveBtn) saveBtn.textContent = "Save Stack";
 
         const form = document.getElementById('deck-form');
         if (form) form.reset();
@@ -2669,6 +2773,29 @@
           localStorage.setItem('popcard_deck_stats', JSON.stringify(deckStats));
         }
 
+        // --- BADGE INTEGRATION: Save/Review Checks ---
+        // 1. Speed Demon (rolling 20 reviews in 1 minute)
+        let rolling = JSON.parse(sessionStorage.getItem('popcard_rolling_reviews') || '[]');
+        rolling.push(Date.now());
+        if (rolling.length > 20) {
+          rolling.shift();
+        }
+        sessionStorage.setItem('popcard_rolling_reviews', JSON.stringify(rolling));
+        if (rolling.length === 20 && (rolling[19] - rolling[0] <= 60000)) {
+          window.unlockBadge('speed_demon');
+        }
+
+        // 2. Night Owl (Between 9 PM and 4 AM)
+        const hour = new Date().getHours();
+        if (hour >= 21 || hour < 4) {
+          window.unlockBadge('night_owl');
+        }
+
+        // 3. Early Bird (Between 5 AM and 8 AM)
+        if (hour >= 5 && hour <= 8) {
+          window.unlockBadge('early_bird');
+        }
+
         if (window.renderWeeklyStats) window.renderWeeklyStats();
       };
 
@@ -2677,6 +2804,151 @@
         mcqAnswers[currentCardIndex] = { correct: isCorrect };
         saveDailyStats(isCorrect, currentDeck.id, currentDeck.name);
         if (window.navigateModalCard) window.navigateModalCard(1);
+      };
+
+      window.scrollBadges = function(direction) {
+        const row = document.getElementById('badges-row');
+        if (row) {
+          row.scrollBy({ left: direction * 350, behavior: 'smooth' });
+        }
+      };
+
+      // --- BADGE SHOWCASE LOGIC ---
+      const BADGES_CATALOG = [
+        { id: 'speed_demon', name: 'Speed Demon', desc: 'Reviewed 20 cards in 1 minute', emoji: '⚡' },
+        { id: 'night_owl', name: 'Night Owl', desc: 'Reviewed between 9 PM & 4 AM', emoji: '🦉' },
+        { id: 'early_bird', name: 'Early Bird', desc: 'Reviewed between 5 AM & 8 AM', emoji: '🌅' },
+        { id: 'perfect_week', name: 'Perfect Week', desc: 'Achieved a 7-day streak', emoji: '🔥' },
+        { id: 'perfectionist', name: 'Perfectionist', desc: '100% on a 5+ card stack', emoji: '🎯' },
+        { id: 'card_hoarder', name: 'Card Hoarder', desc: 'Created 5 or more card stacks', emoji: '📦' }
+      ];
+
+      window.showBadgeUnlockPopup = function(badge) {
+        const overlay = document.createElement('div');
+        overlay.className = 'custom-popup-overlay';
+        
+        const box = document.createElement('div');
+        box.className = 'custom-popup-box';
+        box.innerHTML = `
+          <div class="custom-popup-header" style="text-align: center;">
+            <div class="badge-icon-container unlocked" style="margin: 0 auto 15px auto; width: 80px; height: 80px; font-size: 42px; background: linear-gradient(135deg, #fbcfe8, #dda4f5); box-shadow: 0 10px 25px rgba(221, 164, 245, 0.5); display: flex; align-items: center; justify-content: center; border-radius: 50%;">
+              ${badge.emoji}
+            </div>
+            <h3 style="color: var(--theme-primary); font-family: 'Fredoka', sans-serif; font-size: 24px; font-weight: 700; text-align: center; margin: 0;">Badge Unlocked!</h3>
+          </div>
+          <div class="custom-popup-message" style="font-family: 'Fredoka', sans-serif; font-size: 18px; font-weight: 600; color: #4a3c54; margin: 10px 0 5px 0; text-align: center;">
+            ${badge.name}
+          </div>
+          <div class="custom-popup-message" style="font-size: 14px; color: #7f8c8d; text-align: center; margin-bottom: 20px;">
+            ${badge.desc}
+          </div>
+          <div class="custom-popup-buttons" style="justify-content: center; display: flex;">
+            <button class="custom-popup-btn custom-popup-btn-primary" style="padding: 10px 24px; border-radius: 30px; font-size: 15px; width: auto; background: var(--theme-btn-gradient-feature);">Awesome! ✨</button>
+          </div>
+        `;
+        
+        overlay.appendChild(box);
+        document.body.appendChild(overlay);
+        
+        setTimeout(() => overlay.classList.add('active'), 10);
+        
+        const okBtn = box.querySelector('.custom-popup-btn-primary');
+        okBtn.focus();
+        okBtn.onclick = () => {
+          overlay.classList.remove('active');
+          setTimeout(() => overlay.remove(), 300);
+        };
+      };
+      window.checkWeeklyReset = function() {
+        const getWeekNumber = (d) => {
+          d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+          d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
+          var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+          var weekNo = Math.ceil(( ( (d - yearStart) / 86400000) + 1)/7);
+          return d.getUTCFullYear() + "-W" + weekNo;
+        };
+
+        const currentWeek = getWeekNumber(new Date());
+        const lastCheckedWeek = localStorage.getItem('popcard_badges_week');
+        if (lastCheckedWeek !== currentWeek) {
+          localStorage.setItem('popcard_badges', '[]');
+          localStorage.setItem('popcard_badges_week', currentWeek);
+        }
+      };
+
+      window.unlockBadge = function(badgeId) {
+        window.checkWeeklyReset();
+        const unlocked = JSON.parse(localStorage.getItem('popcard_badges') || '[]');
+        if (!unlocked.includes(badgeId)) {
+          unlocked.push(badgeId);
+          localStorage.setItem('popcard_badges', JSON.stringify(unlocked));
+          const badge = BADGES_CATALOG.find(b => b.id === badgeId);
+          if (badge) {
+            setTimeout(() => {
+              window.showBadgeUnlockPopup(badge);
+            }, 500);
+          }
+          if (window.renderBadges) window.renderBadges();
+        }
+      };
+
+      window.renderBadges = function() {
+        const badgesRow = document.getElementById('badges-row');
+        const unlockedCountEl = document.getElementById('badges-unlocked-count');
+        if (!badgesRow || !unlockedCountEl) return;
+
+        window.checkWeeklyReset();
+        const unlocked = JSON.parse(localStorage.getItem('popcard_badges') || '[]');
+        
+        // 1. Perfect Week check (Monday till Sunday of the current week)
+        const stats = JSON.parse(localStorage.getItem('popcard_stats') || '{}');
+        const getMondayOfCurrentWeek = (d) => {
+          const day = d.getDay();
+          const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+          return new Date(d.setDate(diff));
+        };
+        const mon = getMondayOfCurrentWeek(new Date());
+        const weekDays = [];
+        for (let i = 0; i < 7; i++) {
+          const nextDay = new Date(mon);
+          nextDay.setDate(mon.getDate() + i);
+          weekDays.push(nextDay.toISOString().split('T')[0]);
+        }
+        const hasPerfectWeek = weekDays.every(dStr => stats[dStr] && stats[dStr].total > 0);
+        if (hasPerfectWeek) {
+          window.unlockBadge('perfect_week');
+        }
+
+        // 2. Card Hoarder check
+        const decksStored = localStorage.getItem('popcard_decks');
+        if (decksStored) {
+          try {
+            const parsedDecks = JSON.parse(decksStored);
+            if (parsedDecks.length >= 5) {
+              window.unlockBadge('card_hoarder');
+            }
+          } catch(e) {}
+        }
+
+        // Reload updated list
+        const updatedUnlocked = JSON.parse(localStorage.getItem('popcard_badges') || '[]');
+
+        unlockedCountEl.textContent = `${updatedUnlocked.length} / ${BADGES_CATALOG.length} Unlocked`;
+
+        badgesRow.innerHTML = BADGES_CATALOG.map(badge => {
+          const isUnlocked = updatedUnlocked.includes(badge.id);
+          const stateClass = isUnlocked ? 'unlocked' : 'locked';
+          return `
+            <div class="badge-item ${stateClass}" title="${badge.name}: ${badge.desc}">
+              ${!isUnlocked ? '<div class="badge-lock-icon">🔒</div>' : ''}
+              <div class="badge-icon-container">
+                ${badge.emoji}
+              </div>
+              <div class="badge-name">${badge.name}</div>
+              <div class="badge-desc">${badge.desc}</div>
+            </div>
+          `;
+        }).join('');
       };
 
       window.renderWeeklyStats = function() {
@@ -2748,45 +3020,8 @@
           milestoneStatus.textContent = hasAnyData ? (masteredThisMonth >= milestoneGoal ? 'Goal reached!' : 'Level up soon!') : 'Start reviewing!';
         }
 
-        // Practice Stacks Update
-        const practiceSection = document.getElementById('practice-stacks-section');
-        const practiceList = document.getElementById('practice-stacks-list');
-        const deckStats = JSON.parse(localStorage.getItem('popcard_deck_stats') || '{}');
-        
-        let deckArray = Object.keys(deckStats).map(id => {
-          const ds = deckStats[id];
-          return {
-            id: id,
-            name: ds.name,
-            accuracy: ds.total > 0 ? Math.round(((ds.rawCorrect !== undefined ? ds.rawCorrect : ds.correct) / ds.total) * 100) : 0,
-            total: ds.total
-          };
-        }).filter(d => d.total > 0 && d.accuracy < 45);
-
-        deckArray.sort((a, b) => a.accuracy - b.accuracy);
-        const lowestDecks = deckArray.slice(0, 3);
-
-        if (practiceSection && practiceList) {
-          practiceSection.style.display = 'block';
-          if (lowestDecks.length === 0) {
-            practiceList.innerHTML = '<p style="text-align: center; color: #7f8c8d; font-size: 14px; margin: 10px 0;">Review some stacks to see your practice recommendations here!</p>';
-          } else {
-            practiceList.innerHTML = lowestDecks.map(deck => {
-              const statusClass = deck.accuracy < 60 ? 'danger' : 'warning';
-              return `
-                <div class="practice-stack-item">
-                  <div class="practice-stack-info">
-                    <span class="practice-stack-name">${deck.name}</span>
-                    <span class="practice-stack-pct ${statusClass}">${deck.accuracy}%</span>
-                  </div>
-                  <div class="practice-stack-bar-bg">
-                    <div class="practice-stack-bar-fill ${statusClass}" style="width: ${deck.accuracy}%"></div>
-                  </div>
-                </div>
-              `;
-            }).join('');
-          }
-        }
+        // Render the Badge Showcase
+        window.renderBadges();
 
         days.forEach(dateStr => {
           const dayData = stats[dateStr];
@@ -2891,16 +3126,25 @@
         </button>
       </div>
 
-      <button id="modal-delete-btn" class="delete-deck-btn">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-          stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="3 6 5 6 21 6"></polyline>
-          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-          <line x1="10" y1="11" x2="10" y2="17"></line>
-          <line x1="14" y1="11" x2="14" y2="17"></line>
-        </svg>
-        Delete this Stack
-      </button>
+      <div style="display: flex; gap: 12px; width: 100%; margin-top: 15px; z-index: 10;">
+        <button id="modal-edit-btn" class="edit-deck-btn" style="flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; border: 1px solid rgba(142, 68, 173, 0.15); border-radius: 16px; background: rgba(255, 255, 255, 0.85); color: var(--theme-primary); font-family: 'Fredoka', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+            <path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+          </svg>
+          Edit Stack
+        </button>
+        <button id="modal-delete-btn" class="delete-deck-btn" style="flex: 1;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            <line x1="10" y1="11" x2="10" y2="17"></line>
+            <line x1="14" y1="11" x2="14" y2="17"></line>
+          </svg>
+          Delete Stack
+        </button>
+      </div>
     </div>
   </div>
 
