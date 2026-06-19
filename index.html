@@ -74,21 +74,21 @@
                 <span class="theme-label">Forest Moss</span>
               </div>
               <div class="theme-choice-wrapper" onclick="selectTheme(event, 'theme-nebula')">
-                <button class="theme-circle-btn" data-theme="theme-nebula" title="Mystic Nebula" style="background: linear-gradient(135deg, #e0e7ff, #d8b4fe); pointer-events: none;"></button>
+                <button class="theme-circle-btn" data-theme="theme-nebula" title="Mystic Nebula" style="background: linear-gradient(135deg, #ff007f, #ff79c6); pointer-events: none;"></button>
                 <span class="theme-label">Mystic Nebula</span>
               </div>
               <div class="theme-choice-wrapper" onclick="selectTheme(event, 'theme-darkblue')">
-                <button class="theme-circle-btn" data-theme="theme-darkblue" title="Midnight Abyss" style="background: linear-gradient(135deg, #090d16, #1e293b); pointer-events: none;"></button>
+                <button class="theme-circle-btn" data-theme="theme-darkblue" title="Midnight Abyss" style="background: linear-gradient(135deg, #0b1329, #38bdf8); pointer-events: none;"></button>
                 <span class="theme-label">Midnight Abyss</span>
               </div>
               <!-- Row 3 -->
               <div class="theme-choice-wrapper" onclick="selectTheme(event, 'theme-darkgreen')">
-                <button class="theme-circle-btn" data-theme="theme-darkgreen" title="Emerald Shadow" style="background: linear-gradient(135deg, #022c22, #0f766e); pointer-events: none;"></button>
+                <button class="theme-circle-btn" data-theme="theme-darkgreen" title="Emerald Shadow" style="background: linear-gradient(135deg, #022c22, #34d399); pointer-events: none;"></button>
                 <span class="theme-label">Emerald Shadow</span>
               </div>
               <div class="theme-choice-wrapper" onclick="selectTheme(event, 'theme-darkpurple')">
-                <button class="theme-circle-btn" data-theme="theme-darkpurple" title="Royal Velvet" style="background: linear-gradient(135deg, #1e1b4b, #4c1d95); pointer-events: none;"></button>
-                <span class="theme-label">Royal Velvet</span>
+                <button class="theme-circle-btn" data-theme="theme-darkpurple" title="Obsidian Gold" style="background: linear-gradient(135deg, #09090b, #d4af37); pointer-events: none;"></button>
+                <span class="theme-label">Obsidian Gold</span>
               </div>
             </div>
           </div>
@@ -480,7 +480,7 @@
           <!-- Target Folder Selection -->
           <div class="form-group">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-              <label style="font-family: 'Fredoka', sans-serif; font-size: 16px; font-weight: 600; color: #4a3c54; margin-bottom: 0;">Target Folder</label>
+              <label style="font-family: 'Fredoka', sans-serif; font-size: 16px; font-weight: 600; color: var(--theme-card-text, #4a3c54); margin-bottom: 0;">Target Folder</label>
               <button type="button" class="create-folder-inline-btn" onclick="createFolderFromCreator()">+ Create a Folder</button>
             </div>
             
@@ -500,7 +500,7 @@
 
           <!-- Deck Size Selector -->
           <div class="deck-controls">
-            <label style="font-family: 'Fredoka', sans-serif; font-size: 16px; font-weight: 600; color: #4a3c54;">Cards
+            <label style="font-family: 'Fredoka', sans-serif; font-size: 16px; font-weight: 600; color: var(--theme-card-text, #4a3c54);">Cards
               in Deck</label>
             <div class="count-selector">
               <button type="button" class="count-btn" onclick="adjustCount(-1)">&minus;</button>
@@ -810,7 +810,7 @@
         { class: 'theme-nebula', name: 'Mystic Nebula' },
         { class: 'theme-darkblue', name: 'Midnight Abyss' },
         { class: 'theme-darkgreen', name: 'Emerald Shadow' },
-        { class: 'theme-darkpurple', name: 'Royal Velvet' }
+        { class: 'theme-darkpurple', name: 'Obsidian Gold' }
       ];
 
       window.toggleThemeSelector = function (event) {
@@ -2830,19 +2830,17 @@
         const box = document.createElement('div');
         box.className = 'custom-popup-box';
         box.innerHTML = `
-          <div class="custom-popup-header" style="text-align: center;">
-            <div class="badge-icon-container unlocked" style="margin: 0 auto 15px auto; width: 80px; height: 80px; font-size: 42px; background: linear-gradient(135deg, #fbcfe8, #dda4f5); box-shadow: 0 10px 25px rgba(221, 164, 245, 0.5); display: flex; align-items: center; justify-content: center; border-radius: 50%;">
+          <div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px;">
+            <div class="badge-icon-container unlocked" style="width: 80px; height: 80px; font-size: 42px; background: linear-gradient(135deg, #fbcfe8, #dda4f5); box-shadow: 0 10px 25px rgba(221, 164, 245, 0.5); display: flex; align-items: center; justify-content: center; border-radius: 50%; margin-bottom: 8px;">
               ${badge.emoji}
             </div>
-            <h3 style="color: var(--theme-primary); font-family: 'Fredoka', sans-serif; font-size: 24px; font-weight: 700; text-align: center; margin: 0;">Badge Unlocked!</h3>
-          </div>
-          <div class="custom-popup-message" style="font-family: 'Fredoka', sans-serif; font-size: 18px; font-weight: 600; color: #4a3c54; margin: 10px 0 5px 0; text-align: center;">
-            ${badge.name}
-          </div>
-          <div class="custom-popup-message" style="font-size: 14px; color: #7f8c8d; text-align: center; margin-bottom: 20px;">
-            ${badge.desc}
-          </div>
-          <div class="custom-popup-buttons" style="justify-content: center; display: flex;">
+            <h3 style="color: var(--theme-primary); font-family: 'Fredoka', sans-serif; font-size: 24px; font-weight: 700; margin: 0;">Badge Unlocked!</h3>
+            <div style="font-family: 'Fredoka', sans-serif; font-size: 18px; font-weight: 600; color: var(--theme-card-text, #4a3c54); margin: 4px 0 0 0;">
+              ${badge.name}
+            </div>
+            <div style="font-family: 'Quicksand', sans-serif; font-size: 14px; font-weight: 600; color: var(--theme-card-subtext, #7f8c8d); margin-bottom: 10px;">
+              ${badge.desc}
+            </div>
             <button class="custom-popup-btn custom-popup-btn-primary" style="padding: 10px 24px; border-radius: 30px; font-size: 15px; width: auto; background: var(--theme-btn-gradient-feature);">Awesome! ✨</button>
           </div>
         `;
