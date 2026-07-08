@@ -2952,15 +2952,22 @@
         let cardsToday = 0;
         let masteredThisMonth = 0;
 
-        // Generate last 7 days
+        // Generate current week (Monday to Sunday)
         const days = [];
         const todayObj = new Date();
+        const todayStr = todayObj.toISOString().split('T')[0];
         const currentMonthPrefix = todayObj.toISOString().slice(0, 7); // e.g. "2026-05"
 
-        for (let i = 6; i >= 0; i--) {
-          const d = new Date();
-          d.setDate(d.getDate() - i);
-          days.push(d.toISOString().split('T')[0]);
+        const getMonday = (d) => {
+          const day = d.getDay();
+          const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+          return new Date(d.setDate(diff));
+        };
+        const monday = getMonday(new Date());
+        for (let i = 0; i < 7; i++) {
+          const nextDay = new Date(monday);
+          nextDay.setDate(monday.getDate() + i);
+          days.push(nextDay.toISOString().split('T')[0]);
         }
         
         const monthlyStats = JSON.parse(localStorage.getItem('popcard_monthly_stats') || '{}');
@@ -2973,7 +2980,7 @@
           totalCorrect += (stats[date].rawCorrect !== undefined ? stats[date].rawCorrect : stats[date].correct);
           totalAnswered += stats[date].total;
           
-          if (date === days[6]) {
+          if (date === todayStr) {
             // Today
             masteredToday = stats[date].correct;
             cardsToday = stats[date].total;
@@ -3016,13 +3023,13 @@
           const barFill = document.createElement('div');
           barFill.className = 'dashboard-chart-bar-fill';
           barFill.style.height = hasData ? `${pct}%` : '0%';
-          if (dateStr === days[6]) barFill.classList.add('today'); // highlight today
+          if (dateStr === todayStr) barFill.classList.add('today'); // highlight today
           
           const dateLabel = document.createElement('div');
           dateLabel.className = 'dashboard-chart-date';
           const dObj = new Date(dateStr);
           dateLabel.textContent = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][dObj.getDay()];
-          if (dateStr === days[6]) dateLabel.classList.add('today');
+          if (dateStr === todayStr) dateLabel.classList.add('today');
           
           barContainer.appendChild(barFill);
           col.appendChild(barContainer);
@@ -3053,7 +3060,7 @@
             const daySpan = document.createElement('span');
             const dayName = ['S','M','T','W','T','F','S'][dObj.getDay()];
             daySpan.textContent = dayName;
-            if (dateStr === days[6]) {
+            if (dateStr === todayStr) {
               daySpan.style.color = 'var(--theme-primary)';
               daySpan.style.fontWeight = 'bold';
             }
