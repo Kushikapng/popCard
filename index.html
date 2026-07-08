@@ -367,11 +367,7 @@
         <div class="stat-value" id="stat-avg-accuracy">--</div>
         <div class="stat-label">Avg. Accuracy</div>
       </div>
-      <div class="stat-summary-card">
-        <div class="stat-icon-wrapper"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--theme-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div>
-        <div class="stat-value" id="stat-time-spent">--</div>
-        <div class="stat-label">Time Spent Today</div>
-      </div>
+
       <div class="stat-summary-card">
         <div class="stat-icon-wrapper"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--theme-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg></div>
         <div class="stat-value" id="stat-mastered">--</div>
@@ -2996,18 +2992,11 @@
           }
         });
 
-        // Calculate time spent (estimating ~12 seconds per card)
-        let timeSpent = 0;
-        if (cardsToday > 0) {
-          timeSpent = Math.max(1, Math.round((cardsToday * 12) / 60));
-        }
-
         // Top Metrics Updates
         const hasAnyData = Object.keys(stats).length > 0;
         document.getElementById('stat-cards-reviewed').textContent = hasAnyData ? totalCards.toLocaleString() : '--';
         document.getElementById('stat-avg-accuracy').textContent = hasAnyData ? (totalAnswered > 0 ? Math.round((totalCorrect/totalAnswered)*100) + '%' : '0%') : '--';
         document.getElementById('stat-mastered').textContent = hasAnyData ? masteredToday : '--';
-        document.getElementById('stat-time-spent').textContent = hasAnyData ? timeSpent + 'm' : '--';
         
         // Milestone Update
         const milestoneGoal = 100;
