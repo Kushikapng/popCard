@@ -359,18 +359,18 @@
     <div class="stats-top-row">
       <div class="stat-summary-card">
         <div class="stat-icon-wrapper"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--theme-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg></div>
-        <div class="stat-value" id="stat-cards-reviewed">--</div>
-        <div class="stat-label">Total Reviews</div>
+        <div class="stat-value" id="stat-cards-reviewed">0</div>
+        <div class="stat-label">Reviews Today</div>
       </div>
       <div class="stat-summary-card">
         <div class="stat-icon-wrapper"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--theme-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg></div>
-        <div class="stat-value" id="stat-avg-accuracy">--</div>
+        <div class="stat-value" id="stat-avg-accuracy">0%</div>
         <div class="stat-label">Avg. Accuracy</div>
       </div>
 
       <div class="stat-summary-card">
         <div class="stat-icon-wrapper"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--theme-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg></div>
-        <div class="stat-value" id="stat-mastered">--</div>
+        <div class="stat-value" id="stat-mastered">0</div>
         <div class="stat-label">Mastered Today</div>
       </div>
     </div>
@@ -380,7 +380,7 @@
         <div class="chart-header">
           <div>
             <h3>Accuracy Tracking</h3>
-            <p>Daily Performance (%) over last 7 days</p>
+            <p>Average Accuracy (%) over last 7 days</p>
           </div>
           <div class="chart-target">
             <span class="target-dot"></span> Target (90%)
@@ -2988,10 +2988,9 @@
         });
 
         // Top Metrics Updates
-        const hasAnyData = Object.keys(stats).length > 0;
-        document.getElementById('stat-cards-reviewed').textContent = hasAnyData ? totalCards.toLocaleString() : '--';
-        document.getElementById('stat-avg-accuracy').textContent = hasAnyData ? (totalAnswered > 0 ? Math.round((totalCorrect/totalAnswered)*100) + '%' : '0%') : '--';
-        document.getElementById('stat-mastered').textContent = hasAnyData ? masteredToday : '--';
+        document.getElementById('stat-cards-reviewed').textContent = cardsToday.toLocaleString();
+        document.getElementById('stat-avg-accuracy').textContent = totalAnswered > 0 ? Math.round((totalCorrect/totalAnswered)*100) + '%' : '0%';
+        document.getElementById('stat-mastered').textContent = masteredToday.toLocaleString();
         
         // Milestone Update
         const milestoneGoal = 100;
@@ -2999,10 +2998,10 @@
         const milestoneText = document.getElementById('milestone-text');
         const milestoneStatus = document.getElementById('milestone-status');
         if (milestoneBar && milestoneText && milestoneStatus) {
-          const pct = hasAnyData ? Math.min(100, Math.round((masteredThisMonth / milestoneGoal) * 100)) : 0;
+          const pct = Math.min(100, Math.round((masteredThisMonth / milestoneGoal) * 100));
           milestoneBar.style.width = pct + '%';
-          milestoneText.textContent = hasAnyData ? (masteredThisMonth + '/' + milestoneGoal) : '--/100';
-          milestoneStatus.textContent = hasAnyData ? (masteredThisMonth >= milestoneGoal ? 'Goal reached!' : 'Level up soon!') : 'Start reviewing!';
+          milestoneText.textContent = masteredThisMonth + '/' + milestoneGoal;
+          milestoneStatus.textContent = masteredThisMonth >= milestoneGoal ? 'Goal reached!' : 'Level up soon!';
         }
 
         // Render the Badge Showcase
@@ -3010,8 +3009,20 @@
 
         days.forEach(dateStr => {
           const dayData = stats[dateStr];
-          const pct = dayData && dayData.total > 0 ? Math.round(((dayData.rawCorrect !== undefined ? dayData.rawCorrect : dayData.correct) / dayData.total) * 100) : 0;
           const hasData = dayData && dayData.total > 0;
+          
+          let pct = 0;
+          if (hasData) {
+            let cumulativeCorrect = 0;
+            let cumulativeTotal = 0;
+            Object.keys(stats).forEach(date => {
+              if (date <= dateStr) {
+                cumulativeCorrect += (stats[date].rawCorrect !== undefined ? stats[date].rawCorrect : stats[date].correct);
+                cumulativeTotal += stats[date].total;
+              }
+            });
+            pct = cumulativeTotal > 0 ? Math.round((cumulativeCorrect / cumulativeTotal) * 100) : 0;
+          }
           
           // Chart Column
           const col = document.createElement('div');
