@@ -2769,15 +2769,16 @@
         }
 
         // --- BADGE INTEGRATION: Save/Review Checks ---
-        // 1. Speed Demon (rolling 20 reviews in 1 minute)
-        let rolling = JSON.parse(sessionStorage.getItem('popcard_rolling_reviews') || '[]');
-        rolling.push(Date.now());
-        if (rolling.length > 20) {
-          rolling.shift();
+        // 1. Synapse (correctly answer 10 cards in a row)
+        let streak = parseInt(sessionStorage.getItem('popcard_correct_streak') || '0', 10);
+        if (isCorrect) {
+          streak += 1;
+        } else {
+          streak = 0;
         }
-        sessionStorage.setItem('popcard_rolling_reviews', JSON.stringify(rolling));
-        if (rolling.length === 20 && (rolling[19] - rolling[0] <= 60000)) {
-          window.unlockBadge('speed_demon');
+        sessionStorage.setItem('popcard_correct_streak', streak);
+        if (streak >= 10) {
+          window.unlockBadge('synapse');
         }
 
         // 2. Night Owl (Between 9 PM and 4 AM)
@@ -2810,7 +2811,7 @@
 
       // --- BADGE SHOWCASE LOGIC ---
       const BADGES_CATALOG = [
-        { id: 'speed_demon', name: 'Speed Demon', desc: 'Reviewed 20 cards in 1 minute', emoji: '⚡' },
+        { id: 'synapse', name: 'Synapse', desc: 'Correctly answered 10 cards in a row', emoji: '🧠' },
         { id: 'night_owl', name: 'Night Owl', desc: 'Reviewed between 9 PM & 4 AM', emoji: '🦉' },
         { id: 'early_bird', name: 'Early Bird', desc: 'Reviewed between 5 AM & 8 AM', emoji: '🌅' },
         { id: 'perfect_week', name: 'Perfect Week', desc: 'Achieved a 7-day streak', emoji: '🔥' },
@@ -2973,23 +2974,21 @@
         const monthlyStats = JSON.parse(localStorage.getItem('popcard_monthly_stats') || '{}');
         masteredThisMonth = monthlyStats[currentMonthPrefix] ? monthlyStats[currentMonthPrefix].correct : 0;
 
-        // Calculate totals across all history for accurate averages
+        // Calculate totals for today
         Object.keys(stats).forEach(date => {
-          totalCards += stats[date].total;
-          // Use rawCorrect for accuracy if available, fallback to correct
-          totalCorrect += (stats[date].rawCorrect !== undefined ? stats[date].rawCorrect : stats[date].correct);
-          totalAnswered += stats[date].total;
-          
           if (date === todayStr) {
-            // Today
             masteredToday = stats[date].correct;
             cardsToday = stats[date].total;
           }
         });
 
-        // Top Metrics Updates
+        // Top Metrics Updates (Only today's accuracy)
+        const todayCorrect = stats[todayStr] ? (stats[todayStr].rawCorrect !== undefined ? stats[todayStr].rawCorrect : stats[todayStr].correct) : 0;
+        const todayAnswered = stats[todayStr] ? stats[todayStr].total : 0;
+        const todayAccuracy = todayAnswered > 0 ? Math.round((todayCorrect / todayAnswered) * 100) + '%' : '0%';
+
         document.getElementById('stat-cards-reviewed').textContent = cardsToday.toLocaleString();
-        document.getElementById('stat-avg-accuracy').textContent = totalAnswered > 0 ? Math.round((totalCorrect/totalAnswered)*100) + '%' : '0%';
+        document.getElementById('stat-avg-accuracy').textContent = todayAccuracy;
         document.getElementById('stat-mastered').textContent = masteredToday.toLocaleString();
         
         // Milestone Update
@@ -3013,15 +3012,9 @@
           
           let pct = 0;
           if (hasData) {
-            let cumulativeCorrect = 0;
-            let cumulativeTotal = 0;
-            Object.keys(stats).forEach(date => {
-              if (date <= dateStr) {
-                cumulativeCorrect += (stats[date].rawCorrect !== undefined ? stats[date].rawCorrect : stats[date].correct);
-                cumulativeTotal += stats[date].total;
-              }
-            });
-            pct = cumulativeTotal > 0 ? Math.round((cumulativeCorrect / cumulativeTotal) * 100) : 0;
+            const dayCorrect = dayData.rawCorrect !== undefined ? dayData.rawCorrect : dayData.correct;
+            const dayTotal = dayData.total;
+            pct = dayTotal > 0 ? Math.round((dayCorrect / dayTotal) * 100) : 0;
           }
           
           // Chart Column
