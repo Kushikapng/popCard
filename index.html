@@ -380,10 +380,10 @@
         <div class="chart-header">
           <div>
             <h3>Accuracy Tracking</h3>
-            <p>Average Accuracy (%) over last 7 days</p>
+            <p>Average Accuracy (%) over the week</p>
           </div>
           <div class="chart-target">
-            <span class="target-dot"></span> Target (90%)
+            <span class="target-dot" id="target-dot"></span> Target (90%)
           </div>
         </div>
         <div class="chart-area" id="main-stats-chart">
@@ -2991,6 +2991,20 @@
         document.getElementById('stat-avg-accuracy').textContent = todayAccuracy;
         document.getElementById('stat-mastered').textContent = masteredToday.toLocaleString();
         
+        // Update Target Dot Glow
+        const targetDot = document.getElementById('target-dot');
+        if (targetDot) {
+          targetDot.className = 'target-dot';
+          if (todayAnswered > 0) {
+            const todayAccuracyPct = Math.round((todayCorrect / todayAnswered) * 100);
+            if (todayAccuracyPct >= 90) {
+              targetDot.classList.add('reached');
+            } else {
+              targetDot.classList.add('failed');
+            }
+          }
+        }
+
         // Milestone Update
         const milestoneGoal = 100;
         const milestoneBar = document.getElementById('milestone-bar');
@@ -3020,6 +3034,32 @@
           // Chart Column
           const col = document.createElement('div');
           col.className = 'dashboard-chart-col';
+          if (dateStr === todayStr) col.classList.add('selected'); // Highlight today by default
+          
+          col.onclick = () => {
+            // Remove selection from all chart columns
+            const cols = chart.querySelectorAll('.dashboard-chart-col');
+            cols.forEach(c => c.classList.remove('selected'));
+            
+            // Add selection to clicked column
+            col.classList.add('selected');
+            
+            // Update Target Dot Glow using this day's stats
+            const targetDot = document.getElementById('target-dot');
+            if (targetDot) {
+              targetDot.className = 'target-dot';
+              if (hasData) {
+                const dayCorrect = dayData.rawCorrect !== undefined ? dayData.rawCorrect : dayData.correct;
+                const dayTotal = dayData.total;
+                const dayAccuracyPct = Math.round((dayCorrect / dayTotal) * 100);
+                if (dayAccuracyPct >= 90) {
+                  targetDot.classList.add('reached');
+                } else {
+                  targetDot.classList.add('failed');
+                }
+              }
+            }
+          };
           
           const barContainer = document.createElement('div');
           barContainer.className = 'dashboard-chart-bar-bg';

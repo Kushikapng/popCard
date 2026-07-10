@@ -3417,6 +3417,17 @@ body.theme-darkpurple::after {
   height: 10px;
   border-radius: 50%;
   background: var(--theme-primary);
+  transition: all 0.3s ease;
+}
+
+.target-dot.reached {
+  background: #2ecc71;
+  box-shadow: 0 0 8px rgba(46, 204, 113, 0.8), 0 0 15px rgba(46, 204, 113, 0.4);
+}
+
+.target-dot.failed {
+  background: #ff7675;
+  box-shadow: 0 0 8px rgba(255, 118, 117, 0.8), 0 0 15px rgba(255, 118, 117, 0.4);
 }
 
 .chart-area {
@@ -3439,6 +3450,18 @@ body.theme-darkpurple::after {
   gap: 12px;
   height: 100%;
   position: relative;
+  cursor: pointer;
+  border-radius: 8px;
+  padding: 4px;
+  transition: all 0.2s ease;
+}
+
+.dashboard-chart-col:hover {
+  background-color: rgba(142, 68, 173, 0.05);
+}
+
+.dashboard-chart-col.selected {
+  background-color: rgba(142, 68, 173, 0.1);
 }
 
 .dashboard-chart-bar-bg {
