@@ -3918,3 +3918,278 @@ body.theme-darkpurple::after {
 .edit-deck-btn:active {
   transform: translateY(0);
 }
+
+/* ==========================================================================
+   RESPONSIVE DESIGN SYSTEM (MEDIA QUERIES)
+   ========================================================================== */
+
+@media (max-width: 992px) {
+  .facts-section {
+    flex-direction: column-reverse;
+    padding: 50px 30px;
+    gap: 40px;
+    min-height: auto;
+    text-align: center;
+  }
+
+  .text-content {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .outbox {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0;
+  }
+
+  .heading {
+    font-size: 36px;
+    margin-bottom: 20px;
+  }
+
+  .text-content p {
+    max-width: 100%;
+    text-align: left;
+    padding: 25px;
+  }
+
+  .isection {
+    width: 100%;
+    align-items: center;
+  }
+
+  .onei {
+    max-width: 100%;
+  }
+
+  .green-box {
+    margin: 0 auto;
+  }
+
+  /* Creator Panel Sizing on Tablets */
+  .creator-container {
+    padding: 20px 10px;
+  }
+
+  .glass-panel {
+    padding: 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    flex-wrap: wrap;
+    padding: 12px 24px;
+    min-height: auto;
+    gap: 12px;
+  }
+
+  .logo-container {
+    order: 1;
+  }
+
+  .navbar-actions-group {
+    order: 2;
+  }
+
+  .search-container {
+    order: 3;
+    flex: none;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+  }
+
+  .search-bar {
+    padding: 10px 16px 10px 38px;
+  }
+
+  /* Saved Sets Section Sizing on Tablets */
+  .prevCards {
+    padding: 50px 24px;
+  }
+
+  .prev-cards-header {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+    gap: 10px;
+  }
+
+  .prevCards h2 {
+    margin-bottom: 10px;
+    font-size: 28px;
+  }
+
+  .header-actions {
+    display: flex;
+    justify-content: center;
+  }
+
+  .cards-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 25px;
+  }
+
+  .card-set {
+    width: 100%;
+  }
+
+  /* Features Showcase Section */
+  .features-section {
+    padding: 60px 24px;
+  }
+
+  .features-title {
+    font-size: 32px;
+  }
+
+  .features-subtitle {
+    font-size: 16px;
+    padding: 10px 20px;
+  }
+
+  /* Stats Dashboard Responsiveness */
+  .stats-top-row {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .stats-main-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .stats-bottom-row {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  /* Footer Responsiveness */
+  .landing-footer {
+    padding: 40px 20px 20px 20px;
+  }
+
+  .footer-cards-container {
+    gap: 20px;
+  }
+
+  .footer-card {
+    min-width: 100%;
+    transform: none !important; /* Reset tilt on mobile/tablets to prevent horizontal scroll issues */
+  }
+
+  .footer-bottom-links {
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    padding: 10px 16px;
+  }
+
+  .navbar h1 {
+    font-size: 20px;
+  }
+
+  .navbar img {
+    height: 32px;
+  }
+
+  .logo-container {
+    gap: 8px;
+  }
+
+  .navbar button:not(.settings-menu-btn):not(.settings-item) {
+    padding: 8px 14px;
+    font-size: 13px;
+    border-radius: 14px;
+  }
+
+  .facts-section {
+    padding: 30px 16px;
+  }
+
+  .heading {
+    font-size: 28px;
+  }
+
+  .text-content p {
+    font-size: 15px;
+    padding: 20px;
+  }
+
+  .onei {
+    font-size: 14px;
+    padding: 10px 16px;
+  }
+
+  .onei-content {
+    font-size: 13px;
+  }
+
+  /* Creator deck controls vertical stacking */
+  .deck-controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 15px;
+    text-align: center;
+    padding: 16px;
+  }
+
+  .count-selector {
+    justify-content: center;
+  }
+
+  .action-links {
+    justify-content: center;
+  }
+
+  /* Interactive flipped review modal sizing */
+  .review-modal-content {
+    padding: 20px;
+    width: 95%;
+  }
+
+  .modal-card-area {
+    height: 240px;
+  }
+
+  .modal-card-side {
+    padding: 20px;
+  }
+
+  /* Chart resizing for narrow screens to fit 7 columns cleanly */
+  .chart-area {
+    gap: 6px;
+  }
+
+  .dashboard-chart-bar-bg {
+    max-width: 32px;
+  }
+
+  .dashboard-chart-date {
+    font-size: 11px;
+  }
+
+  /* Milestone and Badges sizing */
+  .badges-section {
+    padding: 16px;
+  }
+
+  .badges-title {
+    font-size: 17px;
+  }
+
+  .badges-count-badge {
+    font-size: 11px;
+    padding: 2px 8px;
+  }
+}
+
